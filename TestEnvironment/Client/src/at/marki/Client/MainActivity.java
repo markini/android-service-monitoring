@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.os.Bundle;
 import com.google.android.gcm.GCMRegistrar;
 import de.akquinet.android.androlog.Log;
+import com.googlecode.androidannotations.annotations.EActivity;
 
+@EActivity(R.layout.main)
 public class MainActivity extends Activity {
 
     /**
@@ -13,7 +15,6 @@ public class MainActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
         manageGCM();
     }
 
