@@ -6,6 +6,7 @@ import com.squareup.otto.Bus;
 import dagger.Module;
 import dagger.ObjectGraph;
 import dagger.Provides;
+import timber.log.Timber;
 
 import javax.inject.Singleton;
 
@@ -19,6 +20,7 @@ public class ClientApplication extends Application {
         // ACRA.init(this);
         super.onCreate();
         objectGraph = ObjectGraph.create(new MainModule(this));
+        Timber.plant(new Timber.DebugTree());
     }
 
     public void inject(Object object) {

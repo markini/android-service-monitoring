@@ -1,21 +1,25 @@
 package at.marki.Client;
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import com.google.android.gcm.GCMRegistrar;
-import de.akquinet.android.androlog.Log;
-import com.googlecode.androidannotations.annotations.EActivity;
+import timber.log.Timber;
 
-@EActivity(R.layout.main)
 public class MainActivity extends Activity {
+
+    public static final String TAG_MAIN_ACTIVITY_FRAGMENT = "at.marki.client.fragment.main.tag";
 
     /**
      * Called when the activity is first created.
      */
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.main);
         manageGCM();
+        startTransaction(R.id.fragment_frame, new FragmentMain(), TAG_MAIN_ACTIVITY_FRAGMENT, false);
     }
 
     public void manageGCM() {
@@ -24,13 +28,22 @@ public class MainActivity extends Activity {
         final String regId = GCMRegistrar.getRegistrationId(this);
         if (regId.equals("") || !GCMRegistrar.isRegistered(this)) {
             GCMRegistrar.register(this, GCMIntentService.SENDER_ID);
-            Log.e(this, "received ID: " + GCMRegistrar.getRegistrationId(this));
+            Timber.d("received ID: " + GCMRegistrar.getRegistrationId(this));
         } else {
             if (BuildConfig.DEBUG) {
-                Log.v(this, "Already registered");
+                Timber.d("Already registered");
             }
 //            Intent intent = new Intent(this, RegisterGcmIdService.class);
 //            this.startService(intent);
         }
+    }
+
+    public void startTransaction(int id, Fragment fragment, String tag, boolean addToBackStack) {
+        FragmentTransaction fragTransaction = getFragmentManager().beginTransaction();
+        fragTransaction.replace(id, fragment, tag);
+        if (addToBackStack) {
+            fragTransaction.addToBackStack(null);
+        }
+        fragTransaction.commit();
     }
 }

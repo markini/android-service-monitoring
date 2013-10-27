@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+    <TextView
+            android:id="@+id/tv_test"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="initial Text"
+            android:layout_alignParentTop="true"
+            android:textSize="25sp"/>
+
+    <Button android:id="@+id/btn_set_ip"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="Set Server IP"
+            android:layout_above="@+id/btn_show_gcm"/>
+
+    <Button android:id="@+id/btn_show_gcm"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="Show GCM"
+            android:layout_above="@+id/btn_ping_server"/>
+
+    <Button android:id="@+id/btn_ping_server"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="Ping Server"
+            android:layout_alignParentBottom="true"/>
+</RelativeLayout>
+

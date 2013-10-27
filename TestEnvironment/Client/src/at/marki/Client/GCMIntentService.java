@@ -4,11 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import com.google.android.gcm.GCMBaseIntentService;
-import de.akquinet.android.androlog.Log;
+import timber.log.Timber;
 
 public class GCMIntentService extends GCMBaseIntentService {
 
-    public static final String SENDER_ID = "471176147026";
+    public static final String SENDER_ID = "380505122106";
 
     @Override
     protected String[] getSenderIds(Context context) {
@@ -19,42 +19,31 @@ public class GCMIntentService extends GCMBaseIntentService {
 
     @Override
     protected void onError(Context context, String arg1) {
-        Log.e(this, "ERROR " + arg1);
+        Timber.e("ERROR " + arg1);
     }
 
     @Override
     protected void onMessage(Context context, Intent messageIntent) {
-        Log.i(this, "Received new message");
+        Timber.i("Received new message");
 
         Bundle bundle = messageIntent.getExtras();
 
         String id = bundle.getString("id");
         if (id == null) {
-            Log.e(this, "no id found in message - abort");
+            Timber.e("no id found in message - abort");
             return;
         }
-
-        // start download service
-//		Intent intent = new Intent(context, ProjectLoaderService.class);
-//		intent.putExtra("id", id);
-//		context.startService(intent);
     }
 
     @Override
     protected void onRegistered(Context context, String id) {
-        Log.i(TAG, "onRegister called - starting sendGcmIdTask");
+        Timber.i("onRegister called - starting sendGcmIdTask");
 
-//        Intent intent = new Intent(this, RegisterGcmIdService.class);
-//        context.startService(intent);
     }
 
     @Override
     protected void onUnregistered(Context context, String arg1) {
-        Log.i(TAG, "onUnRegistered called");
-//        if (GCMRegistrar.isRegisteredOnServer(context)) {
-//            Intent intent = new Intent(context, UnregisterGcmService.class);
-//            context.startService(intent);
-//        }
+        Timber.i("onUnRegistered called");
     }
 
 }

@@ -8,7 +8,7 @@
 
     <!-- GCM START -->
     <permission
-            android:name="at.marki.Client.permission.C2D_MESSAGE"
+            android:name=".permission.C2D_MESSAGE"
             android:protectionLevel="signature"/>
 
     <uses-permission android:name="at.rablzt.work.permission.C2D_MESSAGE"/>
@@ -25,8 +25,8 @@
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application android:label="@string/app_name" android:icon="@drawable/ic_launcher"
-                 android:name="at.marki.Client.ClientApplication">
-        <activity android:name="MainActivity"
+                 android:name=".ClientApplication">
+        <activity android:name="at.marki.Client.MainActivity"
                   android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -42,12 +42,12 @@
                 <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION"/>
 
-                <category android:name="at.rablzt.work"/>
+                <category android:name="at.marki.Client"/>
             </intent-filter>
         </receiver>
         <!-- GCM END -->
 
-        <service android:name="at.marki.Client.GCMIntentService"/>
+        <service android:name=".GCMIntentService"/>
 
     </application>
 </manifest>
