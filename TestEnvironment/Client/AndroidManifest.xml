@@ -8,10 +8,10 @@
 
     <!-- GCM START -->
     <permission
-            android:name=".permission.C2D_MESSAGE"
+            android:name="at.marki.Client.permission.C2D_MESSAGE"
             android:protectionLevel="signature"/>
 
-    <uses-permission android:name="at.rablzt.work.permission.C2D_MESSAGE"/>
+    <uses-permission android:name="at.marki.Client.permission.C2D_MESSAGE"/>
     <!-- App receives GCM messages. -->
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
     <!-- GCM requires a Google account. -->
@@ -47,7 +47,7 @@
         </receiver>
         <!-- GCM END -->
 
-        <service android:name=".GCMIntentService"/>
+        <service android:name="at.marki.Client.GCMIntentService"/>
 
     </application>
 </manifest>

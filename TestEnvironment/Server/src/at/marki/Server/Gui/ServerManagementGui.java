@@ -1,32 +1,50 @@
 package at.marki.Server.Gui;
 
-import at.marki.Server.Server.SimpleJettyServer;
+import at.marki.Server.Data.Data;
+import at.marki.Server.Servlet.GCMSend;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 /**
  * Created by marki on 27.10.13.
  */
 public class ServerManagementGui {
-    public JButton btn_send_gcm_message;
-    public JTextPane txt_show_log;
-    public JTextPane txt_show_incoming;
+    public JButton buttonSendGcmMessage;
+    public JTextPane textPaneLog;
+    public JTextPane textPaneIncoming;
     public JPanel root_panel;
+    private JButton buttonSetGcmId;
+    private JTextField editTextGcmId;
+    private JTextField editTextGcmMessage;
 
     public static ServerManagementGui instance = null;
 
     public ServerManagementGui() {
-        btn_send_gcm_message.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e){
-                System.out.println("Fucking button clicked!!!");
+        buttonSendGcmMessage.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String message = "";
+                if (editTextGcmMessage != null && editTextGcmMessage.getText() != null) {
+                    message = editTextGcmMessage.getText();
+                }
+                ArrayList<String> devices = new ArrayList<String>();
+                devices.add(Data.gcmId);
+                GCMSend.sendMessage(message, devices);
             }
         });
         instance = this;
+        buttonSetGcmId.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (editTextGcmId != null && editTextGcmId.getText() != null) {
+                    Data.gcmId = editTextGcmId.getText();
+                }
+            }
+        });
     }
 
-    public void startGui(){
+    public void startGui() {
         JFrame frame = new JFrame("ServerManagementGui");
         frame.setContentPane(new ServerManagementGui().root_panel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -34,21 +52,7 @@ public class ServerManagementGui {
         frame.setVisible(true);
     }
 
-    public static ServerManagementGui getGui(){
+    public static ServerManagementGui getGui() {
         return instance;
     }
-
-//    public static void main(String[] args) {
-//        JFrame frame = new JFrame("ServerManagementGui");
-//        frame.setContentPane(new ServerManagementGui().root_panel);
-//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        frame.pack();
-//        frame.setVisible(true);
-//
-//        try {
-//            SimpleJettyServer.startServer();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
 }

@@ -12,6 +12,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 
     @Override
     protected String[] getSenderIds(Context context) {
+        Timber.i("getSenderIds");
         String[] ids = new String[1];
         ids[0] = SENDER_ID;
         return ids;
@@ -28,11 +29,12 @@ public class GCMIntentService extends GCMBaseIntentService {
 
         Bundle bundle = messageIntent.getExtras();
 
-        String id = bundle.getString("id");
-        if (id == null) {
-            Timber.e("no id found in message - abort");
-            return;
+        String message = bundle.getString("id");
+        if (message != null) {
+            message = "no message";
         }
+
+        Timber.d("new message from server: " + message);
     }
 
     @Override
