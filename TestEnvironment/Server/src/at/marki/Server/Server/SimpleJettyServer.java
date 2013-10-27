@@ -5,7 +5,7 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 
 public class SimpleJettyServer {
 
-    public static void main(String[] args) throws Exception {
+    public static void startServer() throws Exception {
 
         Server server = new Server(1433);
 

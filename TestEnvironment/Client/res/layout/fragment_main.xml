@@ -10,11 +10,6 @@
             android:layout_alignParentTop="true"
             android:textSize="25sp"/>
 
-    <Button android:id="@+id/btn_set_ip"
-            android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:text="Set Server IP"
-            android:layout_above="@+id/btn_show_gcm"/>
-
     <Button android:id="@+id/btn_show_gcm"
             android:layout_width="match_parent" android:layout_height="wrap_content"
             android:text="Show GCM"

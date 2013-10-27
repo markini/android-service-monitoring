@@ -9,7 +9,8 @@ import timber.log.Timber;
 
 public class MainActivity extends Activity {
 
-    public static final String TAG_MAIN_ACTIVITY_FRAGMENT = "at.marki.client.fragment.main.tag";
+    public static final String TAG_MAIN_FRAGMENT = "at.marki.client.fragment.main.tag";
+    public static final String TAG_PREFS_FRAGMENT = "at.marki.client.fragment.prefs.tag";
 
     /**
      * Called when the activity is first created.
@@ -19,7 +20,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         manageGCM();
-        startTransaction(R.id.fragment_frame, new FragmentMain(), TAG_MAIN_ACTIVITY_FRAGMENT, false);
+        startTransaction(R.id.fragment_frame, new FragmentMain(), TAG_MAIN_FRAGMENT, false);
     }
 
     public void manageGCM() {
