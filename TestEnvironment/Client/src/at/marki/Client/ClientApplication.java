@@ -2,6 +2,7 @@ package at.marki.Client;
 
 import android.app.Application;
 import android.content.Context;
+import at.marki.Client.download.GetNewDataService;
 import com.squareup.otto.Bus;
 import dagger.Module;
 import dagger.ObjectGraph;
@@ -10,14 +11,12 @@ import timber.log.Timber;
 
 import javax.inject.Singleton;
 
-//@ReportsCrashes(formKey = "YOUR_FORM_KEY")
 public class ClientApplication extends Application {
 
     private ObjectGraph objectGraph;
 
     @Override
     public void onCreate() {
-        // ACRA.init(this);
         super.onCreate();
         objectGraph = ObjectGraph.create(new MainModule(this));
         Timber.plant(new Timber.DebugTree());
@@ -28,7 +27,9 @@ public class ClientApplication extends Application {
     }
 
     @Module(entryPoints = {
-            MainActivity.class //
+            MainActivity.class, //
+            FragmentMain.class, //
+            GetNewDataService.class //
     })
     static class MainModule {
         private final Context appContext;

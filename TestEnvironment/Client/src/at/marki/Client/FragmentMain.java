@@ -1,15 +1,22 @@
 package at.marki.Client;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.*;
 import android.widget.Button;
 import android.widget.TextView;
+import at.marki.Client.download.GetNewDataService;
+import at.marki.Client.events.newMessageEvent;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import butterknife.Views;
 import com.google.android.gcm.GCMRegistrar;
+import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 import timber.log.Timber;
+
+import javax.inject.Inject;
 
 /**
  * Created by marki on 24.10.13.
@@ -23,10 +30,14 @@ public class FragmentMain extends Fragment {
     @InjectView(R.id.tv_test)
     TextView textViewTest;
 
+    @Inject
+    Bus bus;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        ((ClientApplication) getActivity().getApplication()).inject(this);
     }
 
     @Override
@@ -42,6 +53,37 @@ public class FragmentMain extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
     }
 
+    //--------------------------------------------------------------------------------------------------
+    //PAUSE - RESUME -----------------------------------------------------------------------------------
+
+    @Override
+    public void onPause() {
+        if (BuildConfig.DEBUG) {
+            Timber.d("onPause");
+        }
+        bus.unregister(this);
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        if (BuildConfig.DEBUG) {
+            Timber.d("onResume");
+        }
+        bus.register(this);
+
+        //------------------------------------
+        if (((MainActivity) getActivity()).newMessage) {
+            ((MainActivity) getActivity()).newMessage = false;
+            if (((MainActivity) getActivity()).message != null) {
+                textViewTest.setText("new Message: " + ((MainActivity) getActivity()).message);
+            }
+        }
+
+
+        super.onResume();
+    }
+
     //CLICKLISTENER ---------------------------------------------------------------------
     //-----------------------------------------------------------------------------------
 
@@ -54,7 +96,7 @@ public class FragmentMain extends Fragment {
             case android.R.id.home:
                 break;
             case R.id.menu_new_execution_process:
-                ((MainActivity)getActivity()).startTransaction(R.id.fragment_frame,new FragmentPrefs(),MainActivity.TAG_PREFS_FRAGMENT,true);
+                ((MainActivity) getActivity()).startTransaction(R.id.fragment_frame, new FragmentPrefs(), MainActivity.TAG_PREFS_FRAGMENT, true);
                 break;
             default:
                 return super.onOptionsItemSelected(item);
@@ -64,13 +106,26 @@ public class FragmentMain extends Fragment {
 
     @OnClick(R.id.btn_ping_server)
     public void clickPingServerButton() {
-        Timber.d("timber message");
+        Timber.d("ping server");
+        Intent intent = new Intent(getActivity(), GetNewDataService.class);
+        getActivity().startService(intent);
     }
 
     @OnClick(R.id.btn_show_gcm)
     public void clickGCMButton() {
         GCMRegistrar.setRegisteredOnServer(getActivity(), true);
         Timber.d("gcm id = " + GCMRegistrar.getRegistrationId(getActivity()));
+    }
+
+    //--------------------------------------------------------------------------------------------------
+    //EVENTS -------------------------------------------------------------------------------------------
+
+    @Subscribe
+    public void onNewMessageEvent(newMessageEvent event) {
+        if (BuildConfig.DEBUG) {
+            Timber.d("onNewMessageEvent");
+        }
+        textViewTest.setText("new Message: " + event.message);
     }
 
 }

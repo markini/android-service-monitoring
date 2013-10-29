@@ -1,7 +1,9 @@
 package at.marki.Server.Server;
 
+import at.marki.Server.Servlet.ServletGetNewData;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
 
 public class SimpleJettyServer {
 
@@ -13,8 +15,8 @@ public class SimpleJettyServer {
         context.setContextPath("/");
         server.setHandler(context);
 
-//		context.addServlet(new ServletHolder(new ServletSendProjectData()), "/" + Servlet.GET_PROJECT_WITH_NUMMBER);
-//
+		context.addServlet(new ServletHolder(new ServletGetNewData()), "/getData");
+
 //		ServletHolder holder = new ServletHolder(new ServletMessageReceiver());
 //		MultipartConfigElement element = new MultipartConfigElement("data/tmp");
 //		holder.getRegistration().setMultipartConfig(element);

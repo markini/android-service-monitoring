@@ -16,9 +16,9 @@ public class ServerManagementGui {
     public JTextPane textPaneLog;
     public JTextPane textPaneIncoming;
     public JPanel root_panel;
-    private JButton buttonSetGcmId;
-    private JTextField editTextGcmId;
-    private JTextField editTextGcmMessage;
+    public JButton buttonSetGcmId;
+    public JTextField editTextGcmId;
+    public JTextField editTextGcmMessage;
 
     public static ServerManagementGui instance = null;
 

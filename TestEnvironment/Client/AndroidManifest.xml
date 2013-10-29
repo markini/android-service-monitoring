@@ -11,6 +11,12 @@
             android:name="at.marki.Client.permission.C2D_MESSAGE"
             android:protectionLevel="signature"/>
 
+    <permission
+            android:name="at.marki.Client.BROADCASTNOTIFY"
+            android:label="test_label"
+            android:protectionLevel="signature">
+    </permission>
+
     <uses-permission android:name="at.marki.Client.permission.C2D_MESSAGE"/>
     <!-- App receives GCM messages. -->
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
@@ -19,6 +25,7 @@
     <!-- Keeps the processor from sleeping when a message is received. -->
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="at.marki.Client.BROADCASTNOTIFY"/>
 
     <!-- GCM END -->
 
@@ -47,7 +54,18 @@
         </receiver>
         <!-- GCM END -->
 
+        <receiver
+                android:name="at.marki.Client.receiver.StaticReceiverMessages"
+                android:enabled="true"
+                android:exported="false"
+                android:permission="at.marki.Client.BROADCASTNOTIFY">
+            <intent-filter android:priority="20">
+                <action android:name="intent.filter.marki.message.receiver"/>
+            </intent-filter>
+        </receiver>
+
         <service android:name="at.marki.Client.GCMIntentService"/>
+        <service android:name="at.marki.Client.download.GetNewDataService"/>
 
     </application>
 </manifest>
