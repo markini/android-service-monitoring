@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import at.marki.Client.MainActivity;
 import at.marki.Client.R;
+import at.marki.Client.utils.Data;
 
 /**
  * Created by marki on 29.10.13.
@@ -22,7 +23,7 @@ public class StaticReceiverMessages extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         MainActivity.newMessage = true;
         String message = intent.getExtras().getString("message");
-        MainActivity.message = message;
+        Data.messages.add(message);
         makeNotification(context);
         abortBroadcast();
     }

@@ -13,12 +13,10 @@ import java.util.ArrayList;
  */
 public class ServerManagementGui {
     public JButton buttonSendGcmMessage;
-    public JTextPane textPaneLog;
-    public JTextPane textPaneIncoming;
     public JPanel root_panel;
-    public JButton buttonSetGcmId;
-    public JTextField editTextGcmId;
     public JTextField editTextGcmMessage;
+    public JList listLog;
+    public JList listMessages;
 
     public static ServerManagementGui instance = null;
 
@@ -32,16 +30,13 @@ public class ServerManagementGui {
                 ArrayList<String> devices = new ArrayList<String>();
                 devices.add(Data.gcmId);
                 GCMSend.sendMessage(message, devices);
+                ((DefaultListModel) listMessages.getModel()).addElement("message: " + message);
             }
         });
         instance = this;
-        buttonSetGcmId.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (editTextGcmId != null && editTextGcmId.getText() != null) {
-                    Data.gcmId = editTextGcmId.getText();
-                }
-            }
-        });
+
+        listLog.setModel(new DefaultListModel());
+        listMessages.setModel(new DefaultListModel());
     }
 
     public void startGui() {
@@ -54,5 +49,17 @@ public class ServerManagementGui {
 
     public static ServerManagementGui getGui() {
         return instance;
+    }
+
+    public static String getMessage() {
+        String message = "";
+
+        if (instance != null && instance.editTextGcmMessage != null) {
+            message = instance.editTextGcmMessage.getText();
+        }
+
+        String time = "";
+        message = message + time;
+        return message;
     }
 }

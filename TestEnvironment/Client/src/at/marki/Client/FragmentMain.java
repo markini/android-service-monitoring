@@ -4,10 +4,13 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.*;
+import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.TextView;
+import android.widget.ListView;
+import at.marki.Client.adapter.AdapterMainFragment;
 import at.marki.Client.download.GetNewDataService;
 import at.marki.Client.events.newMessageEvent;
+import at.marki.Client.utils.Data;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import butterknife.Views;
@@ -27,8 +30,8 @@ public class FragmentMain extends Fragment {
     Button buttonPing;
     @InjectView(R.id.btn_show_gcm)
     Button buttonGCM;
-    @InjectView(R.id.tv_test)
-    TextView textViewTest;
+    @InjectView(R.id.lv_main_messages)
+    ListView messagesListView;
 
     @Inject
     Bus bus;
@@ -44,6 +47,8 @@ public class FragmentMain extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         Views.inject(this, view);
+
+        messagesListView.setAdapter(new AdapterMainFragment(this));
         return view;
     }
 
@@ -73,11 +78,10 @@ public class FragmentMain extends Fragment {
         bus.register(this);
 
         //------------------------------------
+
         if (((MainActivity) getActivity()).newMessage) {
             ((MainActivity) getActivity()).newMessage = false;
-            if (((MainActivity) getActivity()).message != null) {
-                textViewTest.setText("new Message: " + ((MainActivity) getActivity()).message);
-            }
+            ((BaseAdapter) messagesListView.getAdapter()).notifyDataSetChanged();
         }
 
 
@@ -95,8 +99,12 @@ public class FragmentMain extends Fragment {
         switch (item.getItemId()) {
             case android.R.id.home:
                 break;
-            case R.id.menu_new_execution_process:
+            case R.id.menu_settings:
                 ((MainActivity) getActivity()).startTransaction(R.id.fragment_frame, new FragmentPrefs(), MainActivity.TAG_PREFS_FRAGMENT, true);
+                break;
+            case R.id.menu_clear:
+                Data.messages.clear();
+                ((BaseAdapter) messagesListView.getAdapter()).notifyDataSetChanged();
                 break;
             default:
                 return super.onOptionsItemSelected(item);
@@ -125,7 +133,8 @@ public class FragmentMain extends Fragment {
         if (BuildConfig.DEBUG) {
             Timber.d("onNewMessageEvent");
         }
-        textViewTest.setText("new Message: " + event.message);
+        Data.messages.add(event.message);
+        ((BaseAdapter) messagesListView.getAdapter()).notifyDataSetChanged();
     }
 
 }

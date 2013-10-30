@@ -25,7 +25,6 @@ public class MainActivity extends Activity {
     private BroadcastReceiver messageReceiver;
 
     public static boolean newMessage = false;
-    public static String message;
 
     @Inject
     Bus bus;
@@ -39,7 +38,11 @@ public class MainActivity extends Activity {
         setContentView(R.layout.main);
         ((ClientApplication) getApplication()).inject(this);
         manageGCM();
-        startTransaction(R.id.fragment_frame, new FragmentMain(), TAG_MAIN_FRAGMENT, false);
+        Fragment fragmentMain = getFragmentManager().findFragmentByTag(TAG_MAIN_FRAGMENT);
+        if(fragmentMain == null){
+            fragmentMain = new FragmentMain();
+        }
+        startTransaction(R.id.fragment_frame, fragmentMain, TAG_MAIN_FRAGMENT, false);
     }
 
     public void manageGCM() {
