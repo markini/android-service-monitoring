@@ -28,13 +28,13 @@ public class ScheduledExecutor {
             }
         };
 
-        handler = scheduler.scheduleAtFixedRate(beeper, 10, 10, SECONDS);
-        final ScheduledFuture beeperHandle = handler;
+        handler = scheduler.scheduleAtFixedRate(beeper, 10, 60, SECONDS);
+        //final ScheduledFuture beeperHandle = handler;
 
-        scheduler.schedule(new Runnable() {
-            public void run() {
-                beeperHandle.cancel(true);
-            }
-        }, 60 * 60, SECONDS);
+//        scheduler.schedule(new Runnable() {
+//            public void run() {
+//                beeperHandle.cancel(true);
+//            }
+//        }, 60 * 60, SECONDS);
     }
 }

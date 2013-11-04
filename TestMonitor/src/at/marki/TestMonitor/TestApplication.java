@@ -26,8 +26,9 @@ public class TestApplication extends Application {
         Timber.d("starting set recurring alarm!");
         //setRecurringAlarm(getApplicationContext());
         if (executor == null) {
-            executor = new ScheduledExecutor(); //runs even when program is "closed" with back - but doesn't survive closed program with task manager
+            executor = new ScheduledExecutor(); //runs even when program is "closed" with back - but doesn't survive closed program with task manager // when app dies - executorservice stopps
         }
+        //executor.execute();
     }
 
     public void setRecurringAlarm(Context context) { //confirmed for staying active when display is off, when closed app, even when closed app in taskmanager
@@ -39,7 +40,7 @@ public class TestApplication extends Application {
         Intent downloader = new Intent(context, AlarmReceiver.class);
         PendingIntent recurringDownload = PendingIntent.getBroadcast(getBaseContext(), 0, downloader, PendingIntent.FLAG_CANCEL_CURRENT);
         AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        alarm.setRepeating(AlarmManager.RTC, System.currentTimeMillis() + 4000, minutes * 60 * 1000, recurringDownload); // starts in 4 seconds
+        alarm.setRepeating(AlarmManager.RTC, System.currentTimeMillis() + 4000, minutes * 60 * 1000, recurringDownload); // starts in 4 seconds//screams every minute
 
         //set executor
         executor.execute();
@@ -54,6 +55,28 @@ public class TestApplication extends Application {
 
         executor.handler.cancel(true);
     }
+
+//    public void setRecurringAlarm2(Context context){ // dies like executorservice when app closes - but then I could also use executorservice
+//        AlarmManager alarm = (AlarmManager)context.getSystemService(ALARM_SERVICE);
+//        final String SOME_ACTION = "at.marki.dynamic.receiver";
+//        IntentFilter intentFilter = new IntentFilter(SOME_ACTION);
+//        DynamicReceiver mReceiver = new DynamicReceiver();
+//        context.registerReceiver(mReceiver, intentFilter);
+//        Intent i2 = new Intent(SOME_ACTION);
+//        PendingIntent pi = PendingIntent.getBroadcast(context, 0, i2, 0);
+//        alarm.setRepeating(AlarmManager.RTC, System.currentTimeMillis() + 4000, minutes * 60 * 1000, pi); // starts in 4 seconds
+//    }
+//
+//    class DynamicReceiver extends BroadcastReceiver {
+//        @Override
+//        public void onReceive(Context context, Intent arg1) {
+//
+//            SimpleDateFormat sdf = new SimpleDateFormat("dd.MM HH:mm:ss", Locale.GERMANY);
+//            Date resultTime = new Date(System.currentTimeMillis());
+//
+//            Timber.d("Dynamic Alarm Test " + sdf.format(resultTime) + " ------------------------------------------------------------------->>>>>>>>>>>>>>>>>>");
+//        }
+//    }
 
 
 }
