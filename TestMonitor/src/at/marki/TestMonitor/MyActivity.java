@@ -16,12 +16,12 @@ public class MyActivity extends Activity {
     }
 
     public void clickCancelButton(View view){
-        ((TestApplication)getApplication()).cancelAlarm(this);
+        ((TestApplication)getApplication()).cancelAlarm();
     }
 
     public void clickStartButton(View view){
         Timber.d("restart alarm");
-        ((TestApplication)getApplication()).setRecurringAlarm(this);
+        ((TestApplication)getApplication()).setRecurringAlarm();
     }
 
     //TODO: implement ScheduledExecutorService

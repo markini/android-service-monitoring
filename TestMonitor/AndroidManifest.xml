@@ -17,6 +17,6 @@
         </activity>
 
         <receiver
-                android:name=".receiver.AlarmReceiver"></receiver>
+                android:name=".TestMonitor2"></receiver>
     </application>
 </manifest>
