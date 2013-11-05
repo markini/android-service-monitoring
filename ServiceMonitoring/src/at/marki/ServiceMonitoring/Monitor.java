@@ -57,7 +57,9 @@ public abstract class Monitor extends BroadcastReceiver {
         final Runnable runner = new Runnable() {
             public void run() {
                 System.out.println("Monitor this from executorservice");
-                monitorThis();
+                if(!monitorThis()){
+                    handleProblem();
+                }
             }
         };
 
@@ -77,7 +79,9 @@ public abstract class Monitor extends BroadcastReceiver {
             @Override
             public void run() {
                 System.out.println("Monitor this from intent service - from alarmmanager");
-                monitorThis();
+                if(!monitorThis()){
+                    handleProblem();
+                }
             }
         }).start();
         //why service: see this: http://shuklaxyz.blogspot.co.at/2012/03/is-starting-thread-in-broadcast.html
