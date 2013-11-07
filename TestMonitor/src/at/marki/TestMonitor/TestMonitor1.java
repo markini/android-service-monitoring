@@ -1,5 +1,6 @@
 package at.marki.TestMonitor;
 
+import android.content.Context;
 import at.marki.ServiceMonitoring.Monitor;
 import timber.log.Timber;
 
@@ -9,7 +10,7 @@ import timber.log.Timber;
 public class TestMonitor1 extends Monitor {
 
     @Override
-    public boolean monitorThis() {
+    public boolean monitorThis(Context context) {
         Timber.d("Monitor this called execution process");
         return true;
     }

@@ -12,6 +12,7 @@ import javax.inject.Inject;
 public class GCMIntentService extends GCMBaseIntentService {
 
     public static final String SENDER_ID = "380505122106";
+    public static boolean receivedPing = false;
 
     @Inject
     Bus bus;
@@ -33,6 +34,12 @@ public class GCMIntentService extends GCMBaseIntentService {
         Timber.i("Received new message");
 
         Bundle bundle = messageIntent.getExtras();
+
+        String pingString = bundle.getString("ping");
+        if(pingString != null){
+            receivedPing = true;
+            return;
+        }
 
         String message = bundle.getString("message");
         if (message == null) {

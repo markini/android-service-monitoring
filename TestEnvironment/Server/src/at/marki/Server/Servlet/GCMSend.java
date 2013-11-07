@@ -1,7 +1,9 @@
 package at.marki.Server.Servlet;
 
+import at.marki.Server.Data.Data;
 import com.google.android.gcm.server.Message;
 import com.google.android.gcm.server.MulticastResult;
+import com.google.android.gcm.server.Result;
 import com.google.android.gcm.server.Sender;
 
 import java.io.IOException;
@@ -26,10 +28,33 @@ public class GCMSend {
             Message message = new Message.Builder().addData("message", messageString).build();
             MulticastResult results = sender.send(message, devices, 5);
             results.getResults();
+
+
             return true;
 
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean pingDevice() {
+        Sender sender = new Sender("AIzaSyCxjJeypI3jZmBIQKoEUgCyGXF98lLZEMw");
+        Message message = new Message.Builder().addData("ping", "ping").build();
+        Result result = null;
+        try {
+            result = sender.send(message, Data.gcmId, 5);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (result == null) {
+            return false;
+        }
+
+        if (result.getErrorCodeName() == null) {
+            return true;
+        } else {
             return false;
         }
     }

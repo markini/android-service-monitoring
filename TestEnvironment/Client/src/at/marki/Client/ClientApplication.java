@@ -3,6 +3,8 @@ package at.marki.Client;
 import android.app.Application;
 import android.content.Context;
 import at.marki.Client.download.GetNewDataService;
+import at.marki.Client.monitoring.MonitorServerPing;
+import at.marki.ServiceMonitoring.Monitor;
 import com.squareup.otto.Bus;
 import dagger.Module;
 import dagger.ObjectGraph;
@@ -15,11 +17,21 @@ public class ClientApplication extends Application {
 
     private ObjectGraph objectGraph;
 
+    public static Monitor pingServerMonitor;
+
     @Override
     public void onCreate() {
         super.onCreate();
         objectGraph = ObjectGraph.create(new MainModule(this));
         Timber.plant(new Timber.DebugTree());
+
+        if (pingServerMonitor == null) {
+            pingServerMonitor = new MonitorServerPing();
+        }
+
+        if (!pingServerMonitor.isRunning()) {
+            pingServerMonitor.executeMonitoring(this, true, 5);
+        }
     }
 
     public void inject(Object object) {

@@ -1,6 +1,8 @@
 package at.marki.Server.Server;
 
+import at.marki.Server.Servlet.ServletCheckGCM;
 import at.marki.Server.Servlet.ServletGetNewData;
+import at.marki.Server.Servlet.ServletPing;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -16,6 +18,10 @@ public class SimpleJettyServer {
         server.setHandler(context);
 
 		context.addServlet(new ServletHolder(new ServletGetNewData()), "/getData");
+
+        context.addServlet(new ServletHolder(new ServletPing()), "/ping");
+
+        context.addServlet(new ServletHolder(new ServletCheckGCM()), "/gcmCheck");
 
 //		ServletHolder holder = new ServletHolder(new ServletMessageReceiver());
 //		MultipartConfigElement element = new MultipartConfigElement("data/tmp");

@@ -20,9 +20,9 @@ public abstract class Monitor extends BroadcastReceiver {
     public ScheduledFuture handler;
 
     /**
-     * @return returns true if no problem and fals if monitoring found a problem
+     * @return returns true if no problem and false if monitoring found a problem
      */
-    public abstract boolean monitorThis();
+    public abstract boolean monitorThis(Context context);
 
     public abstract boolean handleProblem();
 
@@ -31,7 +31,7 @@ public abstract class Monitor extends BroadcastReceiver {
         if (startSticky) {
             startAlarmTask(context, interval);
         } else {
-            startExecutionService(interval);
+            startExecutionService(context, interval);
         }
     }
 
@@ -50,14 +50,14 @@ public abstract class Monitor extends BroadcastReceiver {
         }
     }
 
-    private void startExecutionService(long interval) {
+    private void startExecutionService(final Context context, long interval) {
 
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
         final Runnable runner = new Runnable() {
             public void run() {
                 System.out.println("Monitor this from executorservice");
-                if(!monitorThis()){
+                if(!monitorThis(context)){
                     handleProblem();
                 }
             }
@@ -74,16 +74,20 @@ public abstract class Monitor extends BroadcastReceiver {
     }
 
     @Override
-    public void onReceive(Context context, Intent intent) {
+    public void onReceive(final Context context, Intent intent) {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 System.out.println("Monitor this from intent service - from alarmmanager");
-                if(!monitorThis()){
+                if(!monitorThis(context)){
                     handleProblem();
                 }
             }
         }).start();
         //why service: see this: http://shuklaxyz.blogspot.co.at/2012/03/is-starting-thread-in-broadcast.html
+    }
+
+    public boolean isRunning(){
+        return handler == null ? true : false;
     }
 }

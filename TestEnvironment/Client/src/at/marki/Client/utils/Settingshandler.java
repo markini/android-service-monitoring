@@ -13,4 +13,14 @@ public class Settingshandler {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return "http://" + prefs.getString("tag_server_ip", null) + ":1433" + "/getData";
     }
+
+    public static String getPingServerAddress(Context context){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return "http://" + prefs.getString("tag_server_ip", null) + ":1433" + "/ping";
+    }
+
+    public static String getGcmCheckAddress(Context context){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return "http://" + prefs.getString("tag_server_ip", null) + ":1433" + "/gcmCheck";
+    }
 }
