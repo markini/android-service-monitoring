@@ -32,7 +32,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application android:label="@string/app_name" android:icon="@drawable/ic_launcher"
-                 android:name=".ClientApplication">
+                 android:name=".ClientApplication" android:allowBackup="false">
         <activity android:name="at.marki.Client.MainActivity"
                   android:label="@string/app_name"
                   android:launchMode="singleTask"
@@ -65,6 +65,12 @@
                 <action android:name="intent.filter.marki.message.receiver"/>
             </intent-filter>
         </receiver>
+
+        <receiver
+                android:name=".monitoring.MonitorGcmCheck"/>
+
+        <receiver
+                android:name=".monitoring.MonitorServerPing"/>
 
         <service android:name="at.marki.Client.GCMIntentService"/>
         <service android:name="at.marki.Client.download.GetNewDataService"/>

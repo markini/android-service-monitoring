@@ -52,11 +52,7 @@ public class GCMSend {
             return false;
         }
 
-        if (result.getErrorCodeName() == null) {
-            return true;
-        } else {
-            return false;
-        }
+        return result.getErrorCodeName() == null;
     }
 
 

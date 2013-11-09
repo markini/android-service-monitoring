@@ -25,6 +25,5 @@ public class ServletCheckGCM extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         }
 
-        return;
     }
 }

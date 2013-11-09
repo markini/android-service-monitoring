@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.*;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import at.marki.Client.adapter.AdapterMainFragment;
 import at.marki.Client.download.GetNewDataService;
@@ -24,17 +23,13 @@ import javax.inject.Inject;
 /**
  * Created by marki on 24.10.13.
  */
-public class FragmentMain extends Fragment {
+class FragmentMain extends Fragment {
 
-    @InjectView(R.id.btn_ping_server)
-    Button buttonPing;
-    @InjectView(R.id.btn_show_gcm)
-    Button buttonGCM;
     @InjectView(R.id.lv_main_messages)
     ListView messagesListView;
 
     @Inject
-    Bus bus;
+    private Bus bus;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -123,6 +118,18 @@ public class FragmentMain extends Fragment {
     public void clickGCMButton() {
         GCMRegistrar.setRegisteredOnServer(getActivity(), true);
         Timber.d("gcm id = " + GCMRegistrar.getRegistrationId(getActivity()));
+    }
+
+    @OnClick(R.id.btn_start_monitoring)
+    public void clickStartMonitoring() {
+        clickStopMonitoring();
+        ((ClientApplication) getActivity().getApplication()).startMonitoring();
+    }
+
+    @OnClick(R.id.btn_stop_monitoring)
+    void clickStopMonitoring() {
+        ((ClientApplication) getActivity().getApplication()).pingServerMonitor.stopMonitoring(getActivity());
+        ((ClientApplication) getActivity().getApplication()).gcmCheckMonitor.stopMonitoring(getActivity());
     }
 
     //--------------------------------------------------------------------------------------------------

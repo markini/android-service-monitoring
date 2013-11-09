@@ -21,6 +21,5 @@ public class ServletPing extends HttpServlet {
 
         response.setStatus(HttpServletResponse.SC_OK);
 
-        return;
     }
 }

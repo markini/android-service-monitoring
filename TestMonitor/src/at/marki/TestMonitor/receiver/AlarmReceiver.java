@@ -18,7 +18,7 @@ import java.util.Locale;
 /**
  * Created by marki on 01.11.13.
  */
-public class AlarmReceiver extends BroadcastReceiver {
+class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 

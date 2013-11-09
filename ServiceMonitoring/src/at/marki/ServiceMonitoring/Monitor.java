@@ -17,14 +17,14 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
  */
 public abstract class Monitor extends BroadcastReceiver {
 
-    public ScheduledFuture handler;
+    private ScheduledFuture handler;
 
     /**
-     * @return returns true if no problem and false if monitoring found a problem
+     * @return true if no problem and false if monitoring found a problem
      */
-    public abstract boolean monitorThis(Context context);
+    protected abstract boolean monitorThis(Context context);
 
-    public abstract boolean handleProblem();
+    protected abstract boolean handleProblem();
 
     public void executeMonitoring(Context context, boolean startSticky, int intervalInMinutes) {
         long interval = intervalInMinutes * 60 * 1000;
@@ -84,10 +84,9 @@ public abstract class Monitor extends BroadcastReceiver {
                 }
             }
         }).start();
-        //why service: see this: http://shuklaxyz.blogspot.co.at/2012/03/is-starting-thread-in-broadcast.html
     }
 
     public boolean isRunning(){
-        return handler == null ? true : false;
+        return handler != null;
     }
 }

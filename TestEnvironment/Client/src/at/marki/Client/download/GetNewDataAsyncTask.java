@@ -12,10 +12,10 @@ import org.json.JSONObject;
 /**
  * Created by marki on 29.10.13.
  */
-public class GetNewDataAsyncTask extends AsyncTask<Void, String, String> {
+class GetNewDataAsyncTask extends AsyncTask<Void, String, String> {
 
-    private Bus bus;
-    private Context context;
+    private final Bus bus;
+    private final Context context;
 
     public GetNewDataAsyncTask(Bus bus, Context context){
         this.bus = bus;
@@ -31,8 +31,7 @@ public class GetNewDataAsyncTask extends AsyncTask<Void, String, String> {
 
             if (request.ok()) {
                 JSONObject jsonObject = new JSONObject(request.body());
-                String message = jsonObject.getString("message");
-                return message;
+                return jsonObject.getString("message");
             }
         } catch (RuntimeException e) {
             e.printStackTrace();

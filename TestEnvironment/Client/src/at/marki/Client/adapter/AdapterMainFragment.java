@@ -15,10 +15,10 @@ import at.marki.Client.utils.Data;
  */
 public class AdapterMainFragment extends BaseAdapter {
 
-    private Fragment fragment;
+    private final LayoutInflater inflater;
 
     public AdapterMainFragment(Fragment fragment) {
-        this.fragment = fragment;
+        inflater = (LayoutInflater) fragment.getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
 
@@ -37,7 +37,6 @@ public class AdapterMainFragment extends BaseAdapter {
         }
 
         if (convertView == null) {
-            LayoutInflater inflater = (LayoutInflater) fragment.getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.item_lv_main, parent, false);
             holder = new ViewHolder();
             holder.message = (TextView) convertView.findViewById(R.id.tv_item_lv_main_message);

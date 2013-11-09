@@ -15,18 +15,18 @@ import java.util.Locale;
  * Created by marki on 27.10.13.
  */
 public class ServerManagementGui {
-    public JButton buttonSendGcmMessage;
-    public JPanel root_panel;
-    public JTextField editTextGcmMessage;
+    private JButton buttonSendGcmMessage;
+    private JPanel root_panel;
+    private JTextField editTextGcmMessage;
     public JList listLog;
     public JList listMessages;
 
-    public static ServerManagementGui instance = null;
+    private static ServerManagementGui instance = null;
 
     public ServerManagementGui() {
         buttonSendGcmMessage.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String message = "";
+                String message;
 
                 message = getMessage();
                 ArrayList<String> devices = new ArrayList<String>();

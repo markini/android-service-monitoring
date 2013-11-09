@@ -3,6 +3,7 @@ package at.marki.Client;
 import android.app.Application;
 import android.content.Context;
 import at.marki.Client.download.GetNewDataService;
+import at.marki.Client.monitoring.MonitorGcmCheck;
 import at.marki.Client.monitoring.MonitorServerPing;
 import at.marki.ServiceMonitoring.Monitor;
 import com.squareup.otto.Bus;
@@ -18,6 +19,7 @@ public class ClientApplication extends Application {
     private ObjectGraph objectGraph;
 
     public static Monitor pingServerMonitor;
+    public static Monitor gcmCheckMonitor;
 
     @Override
     public void onCreate() {
@@ -29,8 +31,19 @@ public class ClientApplication extends Application {
             pingServerMonitor = new MonitorServerPing();
         }
 
+        if (gcmCheckMonitor == null) {
+            gcmCheckMonitor = new MonitorGcmCheck();
+        }
+
+        startMonitoring();
+    }
+
+    public void startMonitoring(){
         if (!pingServerMonitor.isRunning()) {
-            pingServerMonitor.executeMonitoring(this, true, 5);
+            pingServerMonitor.executeMonitoring(this, true, 2);
+        }
+        if (!gcmCheckMonitor.isRunning()) {
+            gcmCheckMonitor.executeMonitoring(this, false, 2);
         }
     }
 
@@ -50,22 +63,10 @@ public class ClientApplication extends Application {
             this.appContext = appContext;
         }
 
-//		@Provides
-//		@Singleton
-//		UploadTaskQueue provideUploadTaskQueue(Gson gson) {
-//			return UploadTaskQueue.create(appContext, gson);
-//		}
-
         @Provides
         @Singleton
         Bus provideBus() {
             return new Bus();
         }
-
-//		@Provides
-//		@Singleton
-//		Gson provideGson() {
-//			return new GsonBuilder().create();
-//		}
     }
 }

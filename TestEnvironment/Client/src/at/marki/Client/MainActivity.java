@@ -45,7 +45,7 @@ public class MainActivity extends Activity {
         startTransaction(R.id.fragment_frame, fragmentMain, TAG_MAIN_FRAGMENT, false);
     }
 
-    public void manageGCM() {
+    void manageGCM() {
         GCMRegistrar.checkDevice(this);
         GCMRegistrar.checkManifest(this);
         final String regId = GCMRegistrar.getRegistrationId(this);
@@ -57,6 +57,8 @@ public class MainActivity extends Activity {
                 Timber.d("Already registered");
             }
         }
+
+        GCMRegistrar.setRegisteredOnServer(this, true);
     }
 
     public void startTransaction(int id, Fragment fragment, String tag, boolean addToBackStack) {

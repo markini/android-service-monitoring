@@ -15,6 +15,7 @@ import javax.inject.Inject;
 public class GetNewDataService extends Service {
 
     @Inject
+    private
     Bus bus;
 
     @Override

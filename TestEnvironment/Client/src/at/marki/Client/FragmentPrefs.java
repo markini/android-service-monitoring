@@ -3,7 +3,7 @@ package at.marki.Client;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 
-public class FragmentPrefs extends PreferenceFragment {
+class FragmentPrefs extends PreferenceFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

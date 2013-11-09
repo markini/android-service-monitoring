@@ -26,7 +26,7 @@ public class ServletGetNewData extends HttpServlet {
         response.setStatus(HttpServletResponse.SC_OK);
 
         // RETURN JSON -------------------------------------------------------------------------
-        String message = "default message";
+        String message;
 
         try {
 

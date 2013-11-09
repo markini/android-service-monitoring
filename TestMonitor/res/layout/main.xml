@@ -13,14 +13,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Cancel alarms"
-            android:id="@+id/button"
+            android:id="@+id/button_cancel_alarms"
             android:onClick="clickCancelButton"/>
 
     <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Start alarms"
-            android:id="@+id/button"
+            android:id="@+id/button_start_alarms"
             android:onClick="clickStartButton"/>
 </LinearLayout>
 

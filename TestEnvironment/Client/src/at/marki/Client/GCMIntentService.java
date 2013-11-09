@@ -12,7 +12,7 @@ import javax.inject.Inject;
 public class GCMIntentService extends GCMBaseIntentService {
 
     public static final String SENDER_ID = "380505122106";
-    public static boolean receivedPing = false;
+    private static boolean receivedPing = false;
 
     @Inject
     Bus bus;
