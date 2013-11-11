@@ -8,17 +8,12 @@ import timber.log.Timber;
 /**
  * Created by marki on 06.11.13.
  */
-public class MonitorServerPing extends Monitor {
+public class MonitorConnectivity extends Monitor {
 
     @Override
     public boolean monitorThis(Context context) {
-        if(!CheckConnectivityState.performConnectivityCheck(context)){
-            Settingshandler.setConnectivityState(context,false);
-            return false;
-        }
-
-        if(PingServer.performPing(context)){
-            Settingshandler.setServerState(context,true);
+        if(CheckConnectivityState.performConnectivityCheck(context)){
+            Settingshandler.setConnectivityState(context, true);
             return true;
         }else{
             return false;
@@ -27,8 +22,8 @@ public class MonitorServerPing extends Monitor {
 
     @Override
     public boolean handleProblem(Context context) {
+        Settingshandler.setConnectivityState(context, false);
         Timber.e("in handleProblem");
-        Settingshandler.setServerState(context,false);
         return false;
     }
 }

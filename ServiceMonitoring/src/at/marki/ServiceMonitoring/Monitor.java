@@ -24,7 +24,7 @@ public abstract class Monitor extends BroadcastReceiver {
      */
     protected abstract boolean monitorThis(Context context);
 
-    protected abstract boolean handleProblem();
+    protected abstract boolean handleProblem(Context context);
 
     public void executeMonitoring(Context context, boolean startSticky, int intervalInMinutes) {
         long interval = intervalInMinutes * 60 * 1000;
@@ -48,6 +48,7 @@ public abstract class Monitor extends BroadcastReceiver {
         if (handler != null) {
             handler.cancel(true);
         }
+        handler = null;
     }
 
     private void startExecutionService(final Context context, long interval) {
@@ -58,7 +59,7 @@ public abstract class Monitor extends BroadcastReceiver {
             public void run() {
                 System.out.println("Monitor this from executorservice");
                 if(!monitorThis(context)){
-                    handleProblem();
+                    handleProblem(context);
                 }
             }
         };
@@ -80,7 +81,7 @@ public abstract class Monitor extends BroadcastReceiver {
             public void run() {
                 System.out.println("Monitor this from intent service - from alarmmanager");
                 if(!monitorThis(context)){
-                    handleProblem();
+                    handleProblem(context);
                 }
             }
         }).start();

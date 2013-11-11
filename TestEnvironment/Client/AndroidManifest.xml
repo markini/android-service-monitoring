@@ -27,6 +27,8 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="at.marki.Client.BROADCASTNOTIFY"/>
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
     <!-- GCM END -->
 
     <uses-permission android:name="android.permission.INTERNET"/>

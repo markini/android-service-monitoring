@@ -16,7 +16,7 @@ public class TestMonitor1 extends Monitor {
     }
 
     @Override
-    public boolean handleProblem() {
+    public boolean handleProblem(Context context) {
         Timber.d("Handle problem called execution process");
         return true;
     }

@@ -15,11 +15,7 @@ class PingServer {
             String url = Settingshandler.getPingServerAddress(context);
             HttpRequest request = HttpRequest.get(url).connectTimeout(30000).readTimeout(30000);
 
-            if (request.ok()) {
-                return true;
-            } else{
-                return false;
-            }
+            return request.ok();
         } catch (RuntimeException e) {
             e.printStackTrace();
         }

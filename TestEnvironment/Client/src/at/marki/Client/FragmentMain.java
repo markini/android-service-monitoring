@@ -128,7 +128,7 @@ class FragmentMain extends Fragment {
 
     @OnClick(R.id.btn_stop_monitoring)
     void clickStopMonitoring() {
-        ((ClientApplication) getActivity().getApplication()).pingServerMonitor.stopMonitoring(getActivity());
+        //((ClientApplication) getActivity().getApplication()).pingServerMonitor.stopMonitoring(getActivity());
         ((ClientApplication) getActivity().getApplication()).gcmCheckMonitor.stopMonitoring(getActivity());
     }
 
