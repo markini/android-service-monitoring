@@ -12,7 +12,7 @@ import javax.inject.Inject;
 public class GCMIntentService extends GCMBaseIntentService {
 
     public static final String SENDER_ID = "380505122106";
-    private static boolean receivedPing = false;
+    public static boolean receivedPing = false;
 
     @Inject
     Bus bus;
@@ -37,6 +37,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 
         String pingString = bundle.getString("ping");
         if(pingString != null){
+            Timber.d("test ping gcm from server");
             receivedPing = true;
             return;
         }

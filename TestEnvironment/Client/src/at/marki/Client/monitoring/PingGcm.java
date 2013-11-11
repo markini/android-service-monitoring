@@ -1,6 +1,7 @@
 package at.marki.Client.monitoring;
 
 import android.content.Context;
+import at.marki.Client.GCMIntentService;
 import at.marki.Client.utils.Settingshandler;
 import com.github.kevinsawicki.http.HttpRequest;
 import timber.log.Timber;
@@ -15,7 +16,21 @@ class PingGcm {
             String url = Settingshandler.getGcmCheckAddress(context);
             HttpRequest request = HttpRequest.get(url).connectTimeout(30000).readTimeout(30000);
 
-            return request.ok();
+            if(!request.ok()){
+                return false;
+            }else{
+                try {
+                    Thread.sleep(10000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if(GCMIntentService.receivedPing){
+                    GCMIntentService.receivedPing = false;
+                    return true;
+                }else{
+                    return false;
+                }
+            }
         } catch (RuntimeException e) {
             e.printStackTrace();
         }
