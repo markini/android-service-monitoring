@@ -18,14 +18,14 @@ public class GCMSend {
 
     private final static Logger LOGGER = Logger.getLogger(GCMSend.class.getName());
 
-    public static boolean sendMessage(String messageString, List<String> devices) {
+    public static boolean sendMessage(at.marki.Server.Data.Message messageObject, List<String> devices) {
         try {
             for (String deviceId : devices) {
                 LOGGER.log(Level.INFO, "Sending to ID: " + deviceId);
             }
-            LOGGER.log(Level.INFO, "message: " + messageString);
+            LOGGER.log(Level.INFO, "message: " + messageObject.message);
             Sender sender = new Sender("AIzaSyCxjJeypI3jZmBIQKoEUgCyGXF98lLZEMw");
-            Message message = new Message.Builder().addData("message", messageString).build();
+            Message message = new Message.Builder().addData("message", messageObject.message).addData("messageId",messageObject.id).build();
             MulticastResult results = sender.send(message, devices, 5);
             results.getResults();
 

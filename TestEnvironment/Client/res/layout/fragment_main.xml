@@ -39,7 +39,7 @@
             <Button android:id="@+id/btn_ping_server" android:layout_weight="1"
                     style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="0dp" android:layout_height="match_parent"
-                    android:text="Ping Server"/>
+                    android:text="Get Message"/>
         </LinearLayout>
 
 

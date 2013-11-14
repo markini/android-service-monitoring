@@ -74,8 +74,11 @@
         <receiver
                 android:name=".monitoring.MonitorServerPing"/>
 
+        <receiver android:name=".monitoring.MonitorConnectivity"/>
+
         <service android:name="at.marki.Client.GCMIntentService"/>
         <service android:name="at.marki.Client.download.GetNewDataService"/>
+        <service android:name=".service.StateHandler"/>
 
     </application>
 </manifest>

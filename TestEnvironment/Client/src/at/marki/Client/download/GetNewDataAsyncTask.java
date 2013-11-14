@@ -3,6 +3,7 @@ package at.marki.Client.download;
 import android.content.Context;
 import android.os.AsyncTask;
 import at.marki.Client.events.newMessageEvent;
+import at.marki.Client.utils.Message;
 import at.marki.Client.utils.Settingshandler;
 import com.github.kevinsawicki.http.HttpRequest;
 import com.squareup.otto.Bus;
@@ -12,18 +13,18 @@ import org.json.JSONObject;
 /**
  * Created by marki on 29.10.13.
  */
-class GetNewDataAsyncTask extends AsyncTask<Void, String, String> {
+class GetNewDataAsyncTask extends AsyncTask<Void, Message, Message> {
 
     private final Bus bus;
     private final Context context;
 
-    public GetNewDataAsyncTask(Bus bus, Context context){
+    public GetNewDataAsyncTask(Bus bus, Context context) {
         this.bus = bus;
         this.context = context;
     }
 
     @Override
-    protected String doInBackground(Void... voids) {
+    protected Message doInBackground(Void... voids) {
 
         try {
             String url = Settingshandler.getDownloadAddress(context);
@@ -31,7 +32,12 @@ class GetNewDataAsyncTask extends AsyncTask<Void, String, String> {
 
             if (request.ok()) {
                 JSONObject jsonObject = new JSONObject(request.body());
-                return jsonObject.getString("message");
+                String messageString = jsonObject.getString("message");
+                String messageId = jsonObject.getString("messageId");
+                Message message = new Message(messageId, messageString);
+                return message;
+            } else if (request.notFound()) {
+                return null;
             }
         } catch (RuntimeException e) {
             e.printStackTrace();
@@ -43,8 +49,10 @@ class GetNewDataAsyncTask extends AsyncTask<Void, String, String> {
     }
 
     @Override
-    protected void onPostExecute(String message) {
-        bus.post(new newMessageEvent(message));
+    protected void onPostExecute(Message message) {
+        if (message != null) {
+            bus.post(new newMessageEvent(message));
+        }
     }
 
 }

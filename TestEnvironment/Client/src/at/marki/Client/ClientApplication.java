@@ -3,7 +3,8 @@ package at.marki.Client;
 import android.app.Application;
 import android.content.Context;
 import at.marki.Client.download.GetNewDataService;
-import at.marki.Client.monitoring.MonitorGcmCheck;
+import at.marki.Client.monitoring.MonitorConnectivity;
+import at.marki.Client.monitoring.MonitorServerPing;
 import at.marki.ServiceMonitoring.Monitor;
 import com.squareup.otto.Bus;
 import dagger.Module;
@@ -18,6 +19,8 @@ public class ClientApplication extends Application {
     private ObjectGraph objectGraph;
 
     public static Monitor gcmCheckMonitor;
+    public static Monitor connectivityMonitor;
+    public static Monitor serverMonitor;
 
     @Override
     public void onCreate() {
@@ -25,16 +28,28 @@ public class ClientApplication extends Application {
         objectGraph = ObjectGraph.create(new MainModule(this));
         Timber.plant(new Timber.DebugTree());
 
-        if (gcmCheckMonitor == null) {
-            gcmCheckMonitor = new MonitorGcmCheck();
+//        if (gcmCheckMonitor == null) {
+//            gcmCheckMonitor = new MonitorGcmCheck();
+//        }
+        if (connectivityMonitor == null) {
+            connectivityMonitor = new MonitorConnectivity();
+        }
+        if (serverMonitor == null) {
+            serverMonitor = new MonitorServerPing();
         }
 
         startMonitoring();
     }
 
     public void startMonitoring(){
-        if (!gcmCheckMonitor.isRunning()) {
-            gcmCheckMonitor.executeMonitoring(this, false, 2);
+//        if (!gcmCheckMonitor.isRunning()) {
+//            gcmCheckMonitor.executeMonitoring(this, false, 2);
+//        }
+        if (!connectivityMonitor.isRunning()) {
+            connectivityMonitor.executeMonitoring(this, true, 2);
+        }
+        if (!serverMonitor.isRunning()) {
+            serverMonitor.executeMonitoring(this, true, 3);
         }
     }
 

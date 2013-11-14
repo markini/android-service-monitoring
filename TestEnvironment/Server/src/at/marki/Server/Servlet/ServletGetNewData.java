@@ -4,6 +4,8 @@ package at.marki.Server.Servlet;
  * Created by marki on 29.10.13.
  */
 
+import at.marki.Server.Data.Data;
+import at.marki.Server.Data.Message;
 import at.marki.Server.Gui.ServerManagementGui;
 import net.sf.json.JSONObject;
 
@@ -26,14 +28,19 @@ public class ServletGetNewData extends HttpServlet {
         response.setStatus(HttpServletResponse.SC_OK);
 
         // RETURN JSON -------------------------------------------------------------------------
-        String message;
+        Message message;
 
         try {
 
-            message = ServerManagementGui.getMessage();
+            message = Data.currentMessage;
+            if(message == null){
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
 
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("message", message);
+            jsonObject.put("message", message.message);
+            jsonObject.put("messageId",message.id);
 
             response.setStatus(HttpServletResponse.SC_OK);
             response.setContentType("application/json");

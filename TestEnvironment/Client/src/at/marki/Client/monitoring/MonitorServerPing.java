@@ -12,10 +12,10 @@ public class MonitorServerPing extends Monitor {
 
     @Override
     public boolean monitorThis(Context context) {
-        if(!CheckConnectivityState.performConnectivityCheck(context)){
-            Settingshandler.setConnectivityState(context,false);
-            return false;
-        }
+//        if(!CheckConnectivityState.performConnectivityCheck(context)){
+//            Settingshandler.setConnectivityState(context,false);
+//            return false;
+//        }
 
         if(PingServer.performPing(context)){
             Settingshandler.setServerState(context,true);

@@ -129,7 +129,9 @@ class FragmentMain extends Fragment {
     @OnClick(R.id.btn_stop_monitoring)
     void clickStopMonitoring() {
         //((ClientApplication) getActivity().getApplication()).pingServerMonitor.stopMonitoring(getActivity());
-        ((ClientApplication) getActivity().getApplication()).gcmCheckMonitor.stopMonitoring(getActivity());
+        //((ClientApplication) getActivity().getApplication()).gcmCheckMonitor.stopMonitoring(getActivity());
+        ((ClientApplication) getActivity().getApplication()).serverMonitor.stopMonitoring(getActivity());
+        ((ClientApplication) getActivity().getApplication()).connectivityMonitor.stopMonitoring(getActivity());
     }
 
     //--------------------------------------------------------------------------------------------------
@@ -140,8 +142,10 @@ class FragmentMain extends Fragment {
         if (BuildConfig.DEBUG) {
             Timber.d("onNewMessageEvent");
         }
-        Data.messages.add(event.message);
-        ((BaseAdapter) messagesListView.getAdapter()).notifyDataSetChanged();
+        if(!Data.messages.contains(event.message)){
+            Data.messages.add(event.message);
+            ((BaseAdapter) messagesListView.getAdapter()).notifyDataSetChanged();
+        }
     }
 
 }

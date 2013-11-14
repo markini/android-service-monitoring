@@ -14,6 +14,7 @@ import android.support.v4.app.NotificationCompat;
 import at.marki.Client.MainActivity;
 import at.marki.Client.R;
 import at.marki.Client.utils.Data;
+import at.marki.Client.utils.Message;
 
 /**
  * Created by marki on 29.10.13.
@@ -23,7 +24,9 @@ public class StaticReceiverMessages extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         MainActivity.newMessage = true;
         String message = intent.getExtras().getString("message");
-        Data.messages.add(message);
+        String messageId = intent.getExtras().getString("messageId");
+        Message messageObject = new Message(messageId,message);
+        Data.messages.add(messageObject);
         makeNotification(context);
         abortBroadcast();
     }

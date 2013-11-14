@@ -43,14 +43,19 @@ public class GCMIntentService extends GCMBaseIntentService {
         }
 
         String message = bundle.getString("message");
+        String messageId = bundle.getString("messageId");
         if (message == null) {
             message = "no message";
+        }
+        if (messageId == null) {
+            messageId = "default id";
         }
 
         Timber.d("new message from server: " + message);
 
         Intent broadCastIntent = new Intent(this.getString(R.string.intent_filter_message_receive));
         broadCastIntent.putExtra("message",message);
+        broadCastIntent.putExtra("messageId",messageId);
         this.sendOrderedBroadcast(broadCastIntent, "at.marki.Client.BROADCASTNOTIFY");
 
     }

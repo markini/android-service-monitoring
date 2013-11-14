@@ -9,6 +9,9 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 import at.marki.Client.R;
 import at.marki.Client.utils.Data;
+import at.marki.Client.utils.Message;
+
+import java.util.UUID;
 
 /**
  * Created by marki on 30.10.13.
@@ -29,11 +32,11 @@ public class AdapterMainFragment extends BaseAdapter {
     @Override
     public View getView(int i, View convertView, ViewGroup parent) {
         ViewHolder holder;
-        String message;
+        Message message;
         if (i < Data.messages.size()) {
             message = Data.messages.get(i);
         } else {
-            message = "faulty message";
+            message = new Message(UUID.randomUUID().toString(), "faulty message");
         }
 
         if (convertView == null) {
@@ -46,7 +49,7 @@ public class AdapterMainFragment extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.message.setText(message);
+        holder.message.setText(message.message);
         return convertView;
     }
 

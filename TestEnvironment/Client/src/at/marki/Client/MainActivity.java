@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import at.marki.Client.events.newMessageEvent;
+import at.marki.Client.utils.Message;
 import com.google.android.gcm.GCMRegistrar;
 import com.squareup.otto.Bus;
 import timber.log.Timber;
@@ -100,21 +101,27 @@ public class MainActivity extends Activity {
         @Override
         public void onReceive(Context context, Intent intent) {
             String message = null;
+            String messageId = null;
             Handler MAIN_THREAD = new Handler(Looper.getMainLooper());
             if (intent != null) {
                 try {
                     message = intent.getExtras().getString("message");
+                    messageId = intent.getExtras().getString("messageId");
                 } catch (Exception e) {
                     Timber.e("no extras in on receive of broadcast");
                 }
             } else {
                 message = null;
+                messageId = null;
             }
             if (message == null) {
                 message = "defaultMessage";
             }
+            if(messageId == null){
+                messageId = "defaultId";
+            }
 
-            final String sendMessage = message;
+            final Message sendMessage = new Message(messageId,message);
             MAIN_THREAD.post(new Runnable() {
                 @Override
                 public void run() {
