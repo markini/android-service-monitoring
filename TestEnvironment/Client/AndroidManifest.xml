@@ -79,6 +79,7 @@
         <service android:name="at.marki.Client.GCMIntentService"/>
         <service android:name="at.marki.Client.download.GetNewDataService"/>
         <service android:name=".service.StateHandler"/>
+        <service android:name=".service.RegisterGcmIdService"/>
 
     </application>
 </manifest>

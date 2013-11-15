@@ -1,5 +1,6 @@
 package at.marki.Server.Server;
 
+import at.marki.Server.Servlet.ServletRegisterGcmId;
 import at.marki.Server.Servlet.ServletCheckGCM;
 import at.marki.Server.Servlet.ServletGetNewData;
 import at.marki.Server.Servlet.ServletPing;
@@ -22,6 +23,9 @@ public class SimpleJettyServer {
         context.addServlet(new ServletHolder(new ServletPing()), "/ping");
 
         context.addServlet(new ServletHolder(new ServletCheckGCM()), "/gcmCheck");
+
+        context.addServlet(new ServletHolder(new ServletRegisterGcmId()), "/registerGcmId");
+
 
 //		ServletHolder holder = new ServletHolder(new ServletMessageReceiver());
 //		MultipartConfigElement element = new MultipartConfigElement("data/tmp");

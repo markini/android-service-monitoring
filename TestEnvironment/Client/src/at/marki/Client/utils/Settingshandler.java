@@ -26,6 +26,11 @@ public class Settingshandler {
         return "http://" + prefs.getString("tag_server_ip", null) + ":1433" + "/gcmCheck";
     }
 
+    public static String getRegisterGcmIdAddress(Context context){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return "http://" + prefs.getString("tag_server_ip", null) + ":1433" + "/registerGcmId";
+    }
+
     // server ---------------------------------------------------------------------------
 
     public static boolean getServerState(Context context){

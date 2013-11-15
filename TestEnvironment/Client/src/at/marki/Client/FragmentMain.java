@@ -6,9 +6,11 @@ import android.os.Bundle;
 import android.view.*;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 import at.marki.Client.adapter.AdapterMainFragment;
 import at.marki.Client.download.GetNewDataService;
 import at.marki.Client.events.newMessageEvent;
+import at.marki.Client.service.RegisterGcmIdService;
 import at.marki.Client.utils.Data;
 import butterknife.InjectView;
 import butterknife.OnClick;
@@ -118,12 +120,21 @@ class FragmentMain extends Fragment {
     public void clickGCMButton() {
         GCMRegistrar.setRegisteredOnServer(getActivity(), true);
         Timber.d("gcm id = " + GCMRegistrar.getRegistrationId(getActivity()));
+
+        //start register gcm id intent service
+        Intent intent = new Intent(getActivity(), RegisterGcmIdService.class);
+        intent.putExtra("id", GCMRegistrar.getRegistrationId(getActivity()));
+        getActivity().startService(intent);
+
+        //show toast
+        Toast.makeText(getActivity(), "Registering GCM ID on Server", Toast.LENGTH_SHORT).show();
     }
 
     @OnClick(R.id.btn_start_monitoring)
     public void clickStartMonitoring() {
         clickStopMonitoring();
         ((ClientApplication) getActivity().getApplication()).startMonitoring();
+        Toast.makeText(getActivity(), "Starting Monitoring", Toast.LENGTH_SHORT).show();
     }
 
     @OnClick(R.id.btn_stop_monitoring)
@@ -132,6 +143,7 @@ class FragmentMain extends Fragment {
         //((ClientApplication) getActivity().getApplication()).gcmCheckMonitor.stopMonitoring(getActivity());
         ((ClientApplication) getActivity().getApplication()).serverMonitor.stopMonitoring(getActivity());
         ((ClientApplication) getActivity().getApplication()).connectivityMonitor.stopMonitoring(getActivity());
+        Toast.makeText(getActivity(), "Stopping Monitoring", Toast.LENGTH_SHORT).show();
     }
 
     //--------------------------------------------------------------------------------------------------

@@ -2,6 +2,7 @@ package at.marki.Server.Gui;
 
 import at.marki.Server.Data.Data;
 import at.marki.Server.Data.Message;
+import at.marki.Server.Io.GcmIdManager;
 import at.marki.Server.Servlet.GCMSend;
 
 import javax.swing.*;
@@ -30,11 +31,15 @@ public class ServerManagementGui {
     public ServerManagementGui() {
         buttonSendGcmMessage.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if(Data.currentMessage == null){
+                if (Data.currentMessage == null) {
                     return;
                 }
                 ArrayList<String> devices = new ArrayList<String>();
-                devices.add(Data.gcmId);
+                if (Data.gcmId == null) {
+                    devices.add(GcmIdManager.getGcmId());
+                } else {
+                    devices.add(Data.gcmId);
+                }
                 GCMSend.sendMessage(Data.currentMessage, devices);
                 ((DefaultListModel) listMessages.getModel()).addElement("message: " + Data.currentMessage.message);
             }
@@ -47,12 +52,12 @@ public class ServerManagementGui {
 
                 messageString = getMessage();
 
-                if(messageString == null){
+                if (messageString == null) {
                     Data.currentMessage = null;
                     return;
                 }
 
-                Message message = new Message(messageId,messageString);
+                Message message = new Message(messageId, messageString);
                 Data.currentMessage = message;
                 textViewMessage.setText(message.message);
             }
@@ -86,7 +91,7 @@ public class ServerManagementGui {
             message = instance.editTextGcmMessage.getText();
         }
 
-        if(message == null){
+        if (message == null) {
             return null;
         }
 
