@@ -38,7 +38,7 @@ public class ClientApplication extends Application {
             serverMonitor = new MonitorServerPing();
         }
 
-        startMonitoring();
+        //startMonitoring();
     }
 
     public void startMonitoring(){
