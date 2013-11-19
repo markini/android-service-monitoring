@@ -1,6 +1,8 @@
 package at.marki.Client.monitoring;
 
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 import at.marki.Client.utils.Settingshandler;
 import at.marki.ServiceMonitoring.Monitor;
 import timber.log.Timber;
@@ -40,4 +42,15 @@ public class MonitorGcmCheck extends Monitor {
         Timber.e("in handleProblem");
         return false;
     }
+
+    public static final Parcelable.Creator<Monitor> CREATOR
+            = new Parcelable.Creator<Monitor>() {
+        public Monitor createFromParcel(Parcel in) {
+            return new MonitorGcmCheck();
+        }
+
+        public Monitor[] newArray(int size) {
+            return new MonitorGcmCheck[size];
+        }
+    };
 }

@@ -80,6 +80,7 @@
         <service android:name="at.marki.Client.download.GetNewDataService"/>
         <service android:name=".service.StateHandler"/>
         <service android:name=".service.RegisterGcmIdService"/>
+        <service android:name="at.marki.ServiceMonitoring.MonitorThisService"/>
 
     </application>
 </manifest>

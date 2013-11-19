@@ -1,6 +1,8 @@
 package at.marki.TestMonitor;
 
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 import at.marki.ServiceMonitoring.Monitor;
 import timber.log.Timber;
 
@@ -20,4 +22,15 @@ public class TestMonitor1 extends Monitor {
         Timber.d("Handle problem called execution process");
         return true;
     }
+
+    public static final Parcelable.Creator<Monitor> CREATOR
+            = new Parcelable.Creator<Monitor>() {
+        public Monitor createFromParcel(Parcel in) {
+            return new TestMonitor1();
+        }
+
+        public Monitor[] newArray(int size) {
+            return new TestMonitor1[size];
+        }
+    };
 }

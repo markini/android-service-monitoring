@@ -5,6 +5,8 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -15,9 +17,9 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 /**
  * Created by marki on 04.11.13.
  */
-public abstract class Monitor extends BroadcastReceiver {
+public abstract class Monitor extends BroadcastReceiver implements Parcelable {
 
-    private ScheduledFuture handler;
+    private ScheduledFuture mHandler;
 
     /**
      * @return true if no problem and false if monitoring found a problem
@@ -45,10 +47,10 @@ public abstract class Monitor extends BroadcastReceiver {
         alarmManager.cancel(pendingIntent);
 
         //kill execution process
-        if (handler != null) {
-            handler.cancel(true);
+        if (mHandler != null) {
+            mHandler.cancel(true);
         }
-        handler = null;
+        mHandler = null;
     }
 
     private void startExecutionService(final Context context, long interval) {
@@ -58,13 +60,13 @@ public abstract class Monitor extends BroadcastReceiver {
         final Runnable runner = new Runnable() {
             public void run() {
                 System.out.println("Monitor this from executorservice");
-                if(!monitorThis(context)){
+                if (!monitorThis(context)) {
                     handleProblem(context);
                 }
             }
         };
 
-        handler = scheduler.scheduleAtFixedRate(runner, 1000, interval, MILLISECONDS); //starts in one second
+        mHandler = scheduler.scheduleAtFixedRate(runner, 1000, interval, MILLISECONDS); //starts in one second
     }
 
     private void startAlarmTask(Context context, long interval) {
@@ -76,18 +78,34 @@ public abstract class Monitor extends BroadcastReceiver {
 
     @Override
     public void onReceive(final Context context, Intent intent) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                System.out.println("Monitor this from intent service - from alarmmanager");
-                if(!monitorThis(context)){
-                    handleProblem(context);
-                }
-            }
-        }).start();
+        Intent serviceIntent = new Intent(context.getApplicationContext(), MonitorThisService.class);
+        serviceIntent.putExtra("monitor", this);
+        context.getApplicationContext().startService(serviceIntent);
+
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                System.out.println("Monitor this from intent service - from alarmmanager");
+//                if(!monitorThis(context)){
+//                    handleProblem(context);
+//                }
+//            }
+//        }).start();
     }
 
-    public boolean isRunning(){
-        return handler != null;
+    public boolean isRunning() {
+        return mHandler != null;
+    }
+
+    //PARCELABLE ------------------------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------------------------------
+
+    public int describeContents() {
+        return 0;
+    }
+
+    public void writeToParcel(Parcel out, int flags) {
     }
 }
+
+
