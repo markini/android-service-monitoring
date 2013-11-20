@@ -48,7 +48,7 @@ public abstract class Monitor extends BroadcastReceiver implements Parcelable {
 
         //kill execution process
         if (mHandler != null) {
-            mHandler.cancel(true);
+            mHandler.cancel(false); //will not cancel thread instantaneously / will wait for thread to finish and don't start again
         }
         mHandler = null;
     }
@@ -57,14 +57,14 @@ public abstract class Monitor extends BroadcastReceiver implements Parcelable {
 
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
-        final Runnable runner = new Runnable() {
+        Thread runner = new Thread(new Runnable() {
             public void run() {
                 System.out.println("Monitor this from executorservice");
                 if (!monitorThis(context)) {
                     handleProblem(context);
                 }
             }
-        };
+        });
 
         mHandler = scheduler.scheduleAtFixedRate(runner, 1000, interval, MILLISECONDS); //starts in one second
     }
@@ -81,16 +81,6 @@ public abstract class Monitor extends BroadcastReceiver implements Parcelable {
         Intent serviceIntent = new Intent(context.getApplicationContext(), MonitorThisService.class);
         serviceIntent.putExtra("monitor", this);
         context.getApplicationContext().startService(serviceIntent);
-
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                System.out.println("Monitor this from intent service - from alarmmanager");
-//                if(!monitorThis(context)){
-//                    handleProblem(context);
-//                }
-//            }
-//        }).start();
     }
 
     public boolean isRunning() {

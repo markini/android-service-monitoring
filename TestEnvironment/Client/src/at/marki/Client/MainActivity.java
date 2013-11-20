@@ -43,6 +43,7 @@ public class MainActivity extends Activity {
         if(fragmentMain == null){
             fragmentMain = new FragmentMain();
         }
+
         startTransaction(R.id.fragment_frame, fragmentMain, TAG_MAIN_FRAGMENT, false);
     }
 

@@ -51,6 +51,7 @@ public class ClientApplication extends Application {
         if (!serverMonitor.isRunning()) {
             serverMonitor.executeMonitoring(this, true, 3);
         }
+        
     }
 
     public void inject(Object object) {
