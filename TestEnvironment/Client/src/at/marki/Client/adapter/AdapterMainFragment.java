@@ -19,9 +19,11 @@ import java.util.UUID;
 public class AdapterMainFragment extends BaseAdapter {
 
     private final LayoutInflater inflater;
+    private Context context;
 
     public AdapterMainFragment(Fragment fragment) {
         inflater = (LayoutInflater) fragment.getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.context = fragment.getActivity();
     }
 
 
@@ -33,10 +35,10 @@ public class AdapterMainFragment extends BaseAdapter {
     public View getView(int i, View convertView, ViewGroup parent) {
         ViewHolder holder;
         Message message;
-        if (i < Data.messages.size()) {
-            message = Data.messages.get(i);
+        if (i < Data.getMessages(context).size()) {
+            message = Data.getMessages(context).get(i);
         } else {
-            message = new Message(UUID.randomUUID().toString(), "faulty message");
+            message = new Message(UUID.randomUUID().toString(), "faulty message", System.currentTimeMillis());
         }
 
         if (convertView == null) {
@@ -55,13 +57,13 @@ public class AdapterMainFragment extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return Data.messages.size();
+        return Data.getMessages(context).size();
     }
 
     @Override
     public Object getItem(int i) {
-        if (i < Data.messages.size()) {
-            return Data.messages.get(i);
+        if (i < Data.getMessages(context).size()) {
+            return Data.getMessages(context).get(i);
         } else {
             return "default message";
         }

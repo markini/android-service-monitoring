@@ -100,7 +100,7 @@ class FragmentMain extends Fragment {
                 ((MainActivity) getActivity()).startTransaction(R.id.fragment_frame, new FragmentPrefs(), MainActivity.TAG_PREFS_FRAGMENT, true);
                 break;
             case R.id.menu_clear:
-                Data.messages.clear();
+                Data.getMessages(getActivity()).clear();
                 ((BaseAdapter) messagesListView.getAdapter()).notifyDataSetChanged();
                 break;
             default:
@@ -154,8 +154,8 @@ class FragmentMain extends Fragment {
         if (BuildConfig.DEBUG) {
             Timber.d("onNewMessageEvent");
         }
-        if(!Data.messages.contains(event.message)){
-            Data.messages.add(event.message);
+        if (!Data.getMessages(getActivity()).contains(event.message)) {
+            Data.getMessages(getActivity()).add(event.message);
             ((BaseAdapter) messagesListView.getAdapter()).notifyDataSetChanged();
         }
     }

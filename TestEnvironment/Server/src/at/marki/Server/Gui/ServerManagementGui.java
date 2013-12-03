@@ -8,10 +8,7 @@ import at.marki.Server.Servlet.GCMSend;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
 import java.util.UUID;
 
 /**
@@ -84,9 +81,6 @@ public class ServerManagementGui {
     public static String getMessage() {
         String message = null;
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd.M HH:mm", Locale.GERMANY);
-        Date resultTime = new Date(System.currentTimeMillis());
-
         if (instance != null && instance.editTextGcmMessage != null && instance.editTextGcmMessage.getText() != null) {
             message = instance.editTextGcmMessage.getText();
         }
@@ -94,9 +88,6 @@ public class ServerManagementGui {
         if (message == null) {
             return null;
         }
-
-        String time = sdf.format(resultTime);
-        message = message + " " + time;
         return message;
     }
 }

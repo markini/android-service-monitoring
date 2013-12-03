@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import at.marki.Client.events.newMessageEvent;
+import at.marki.Client.utils.Data;
 import at.marki.Client.utils.Message;
 import com.google.android.gcm.GCMRegistrar;
 import com.squareup.otto.Bus;
@@ -40,7 +41,7 @@ public class MainActivity extends Activity {
         ((ClientApplication) getApplication()).inject(this);
         manageGCM();
         Fragment fragmentMain = getFragmentManager().findFragmentByTag(TAG_MAIN_FRAGMENT);
-        if(fragmentMain == null){
+        if (fragmentMain == null) {
             fragmentMain = new FragmentMain();
         }
 
@@ -118,11 +119,12 @@ public class MainActivity extends Activity {
             if (message == null) {
                 message = "defaultMessage";
             }
-            if(messageId == null){
+            if (messageId == null) {
                 messageId = "defaultId";
             }
 
-            final Message sendMessage = new Message(messageId,message);
+            final Message sendMessage = new Message(messageId, message, System.currentTimeMillis());
+            Data.addMessage(context, sendMessage);
             MAIN_THREAD.post(new Runnable() {
                 @Override
                 public void run() {

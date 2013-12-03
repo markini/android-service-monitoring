@@ -25,8 +25,9 @@ public class StaticReceiverMessages extends BroadcastReceiver {
         MainActivity.newMessage = true;
         String message = intent.getExtras().getString("message");
         String messageId = intent.getExtras().getString("messageId");
-        Message messageObject = new Message(messageId,message);
-        Data.messages.add(messageObject);
+        Message messageObject = new Message(messageId, message, System.currentTimeMillis());
+        Data.addMessage(context, messageObject);
+        Data.getMessages(context).add(messageObject);
         makeNotification(context);
         abortBroadcast();
     }

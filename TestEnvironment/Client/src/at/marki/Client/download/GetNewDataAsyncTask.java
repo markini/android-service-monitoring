@@ -3,6 +3,7 @@ package at.marki.Client.download;
 import android.content.Context;
 import android.os.AsyncTask;
 import at.marki.Client.events.newMessageEvent;
+import at.marki.Client.utils.Data;
 import at.marki.Client.utils.Message;
 import at.marki.Client.utils.Settingshandler;
 import com.github.kevinsawicki.http.HttpRequest;
@@ -34,7 +35,8 @@ class GetNewDataAsyncTask extends AsyncTask<Void, Message, Message> {
                 JSONObject jsonObject = new JSONObject(request.body());
                 String messageString = jsonObject.getString("message");
                 String messageId = jsonObject.getString("messageId");
-                Message message = new Message(messageId, messageString);
+                Message message = new Message(messageId, messageString, System.currentTimeMillis());
+	            Data.addMessage(context, message);
                 return message;
             } else if (request.notFound()) {
                 return null;
