@@ -1,14 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-            android:id="@+id/menu_settings"
-            android:icon="@drawable/ic_action_preferences"
-            android:showAsAction="ifRoom|withText"
-            android:title="Preferences"/>
-    <item
-            android:id="@+id/menu_clear"
-            android:icon="@drawable/ic_action_clear"
-            android:showAsAction="ifRoom|withText"
-            android:title="Clear"/>
+	<item
+			android:id="@+id/menu_settings"
+			android:icon="@drawable/ic_action_preferences"
+			android:showAsAction="ifRoom|withText"
+			android:title="Preferences"/>
+	<item
+			android:id="@+id/menu_clear"
+			android:icon="@drawable/ic_action_clear"
+			android:showAsAction="ifRoom|withText"
+			android:title="Clear"/>
+	<item
+			android:id="@+id/menu_start_monitor"
+			android:icon="@drawable/ic_launcher"
+			android:showAsAction="never"
+			android:title="Start Monitoring"/>
+	<item
+			android:id="@+id/menu_stop_monitor"
+			android:icon="@drawable/ic_launcher"
+			android:showAsAction="never"
+			android:title="Stop Monitoring"/>
 </menu>

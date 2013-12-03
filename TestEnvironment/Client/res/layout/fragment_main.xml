@@ -1,49 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent">
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent">
 
-    <ListView android:layout_width="match_parent" android:layout_height="match_parent"
-              android:paddingBottom="112dp" android:id="@+id/lv_main_messages" android:layout_alignParentTop="true"
-              android:transcriptMode="alwaysScroll"/>
+	<se.emilsjolander.stickylistheaders.StickyListHeadersListView
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:paddingBottom="57dp"
+			android:id="@+id/lv_main_messages"
+			android:layout_alignParentTop="true"
+			android:transcriptMode="alwaysScroll"/>
 
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                  android:layout_alignParentBottom="true" android:divider="?android:dividerHorizontal"
-                  android:showDividers="middle|beginning"
-                  android:orientation="vertical">
+	<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_alignParentBottom="true"
+			android:divider="?android:dividerHorizontal"
+			android:showDividers="middle|beginning"
+			android:orientation="vertical">
 
-        <LinearLayout android:layout_width="match_parent" android:layout_height="55dp"
-                      android:orientation="horizontal"
-                      style="?android:attr/buttonBarStyle">
+		<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="55dp"
+				android:orientation="horizontal"
+				android:layout_alignParentBottom="true"
+				android:id="@+id/lin_lay_gcm_ping"
+				style="?android:attr/buttonBarStyle">
 
-            <Button android:id="@+id/btn_start_monitoring" android:layout_weight="1"
-                    android:layout_width="0dp" android:layout_height="match_parent"
-                    style="?android:attr/buttonBarButtonStyle"
-                    android:text="Start Monitor"/>
+			<Button
+					android:id="@+id/btn_show_gcm"
+					style="?android:attr/buttonBarButtonStyle"
+					android:layout_width="0dp"
+					android:layout_height="match_parent"
+					android:layout_weight="1"
+					android:text="Register GCM"/>
 
-            <Button android:id="@+id/btn_stop_monitoring" android:layout_weight="1"
-                    android:layout_width="0dp" android:layout_height="match_parent"
-                    style="?android:attr/buttonBarButtonStyle"
-                    android:text="Stop Monitor"/>
-        </LinearLayout>
-
-        <LinearLayout android:layout_width="match_parent" android:layout_height="55dp"
-                      android:orientation="horizontal" android:layout_alignParentBottom="true"
-                      android:id="@+id/lin_lay_gcm_ping"
-                      style="?android:attr/buttonBarStyle">
-
-            <Button android:id="@+id/btn_show_gcm" style="?android:attr/buttonBarButtonStyle"
-                    android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
-                    android:text="Register GCM"/>
-
-            <Button android:id="@+id/btn_ping_server" android:layout_weight="1"
-                    style="?android:attr/buttonBarButtonStyle"
-                    android:layout_width="0dp" android:layout_height="match_parent"
-                    android:text="Get Message"/>
-        </LinearLayout>
+			<Button
+					android:id="@+id/btn_ping_server"
+					android:layout_weight="1"
+					style="?android:attr/buttonBarButtonStyle"
+					android:layout_width="0dp"
+					android:layout_height="match_parent"
+					android:text="Get Message"/>
+		</LinearLayout>
 
 
-    </LinearLayout>
+	</LinearLayout>
 
 
 </RelativeLayout>

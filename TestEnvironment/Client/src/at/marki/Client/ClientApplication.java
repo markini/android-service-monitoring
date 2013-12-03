@@ -16,64 +16,65 @@ import javax.inject.Singleton;
 
 public class ClientApplication extends Application {
 
-    private ObjectGraph objectGraph;
+	private ObjectGraph objectGraph;
 
-    public static Monitor gcmCheckMonitor;
-    public static Monitor connectivityMonitor;
-    public static Monitor serverMonitor;
+	public static Monitor gcmCheckMonitor;
+	public static Monitor connectivityMonitor;
+	public static Monitor serverMonitor;
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        objectGraph = ObjectGraph.create(new MainModule(this));
-        Timber.plant(new Timber.DebugTree());
+	@Override
+	public void onCreate() {
+		super.onCreate();
+		objectGraph = ObjectGraph.create(new MainModule(this));
+		Timber.plant(new Timber.DebugTree());
+		//Data.createMockMessages(this);
 
 //        if (gcmCheckMonitor == null) {
 //            gcmCheckMonitor = new MonitorGcmCheck();
 //        }
-        if (connectivityMonitor == null) {
-            connectivityMonitor = new MonitorConnectivity();
-        }
-        if (serverMonitor == null) {
-            serverMonitor = new MonitorServerPing();
-        }
+		if (connectivityMonitor == null) {
+			connectivityMonitor = new MonitorConnectivity();
+		}
+		if (serverMonitor == null) {
+			serverMonitor = new MonitorServerPing();
+		}
 
-        //startMonitoring();
-    }
+		//startMonitoring();
+	}
 
-    public void startMonitoring(){
+	public void startMonitoring() {
 //        if (!gcmCheckMonitor.isRunning()) {
 //            gcmCheckMonitor.executeMonitoring(this, false, 2);
 //        }
-        if (!connectivityMonitor.isRunning()) {
-            connectivityMonitor.executeMonitoring(this, true, 2);
-        }
-        if (!serverMonitor.isRunning()) {
-            serverMonitor.executeMonitoring(this, true, 3);
-        }
-        
-    }
+		if (!connectivityMonitor.isRunning()) {
+			connectivityMonitor.executeMonitoring(this, true, 2);
+		}
+		if (!serverMonitor.isRunning()) {
+			serverMonitor.executeMonitoring(this, true, 3);
+		}
 
-    public void inject(Object object) {
-        objectGraph.inject(object);
-    }
+	}
 
-    @Module(entryPoints = {
-            MainActivity.class, //
-            FragmentMain.class, //
-            GetNewDataService.class //
-    })
-    static class MainModule {
-        private final Context appContext;
+	public void inject(Object object) {
+		objectGraph.inject(object);
+	}
 
-        MainModule(Context appContext) {
-            this.appContext = appContext;
-        }
+	@Module(entryPoints = {
+			MainActivity.class, //
+			FragmentMain.class, //
+			GetNewDataService.class //
+	})
+	static class MainModule {
+		private final Context appContext;
 
-        @Provides
-        @Singleton
-        Bus provideBus() {
-            return new Bus();
-        }
-    }
+		MainModule(Context appContext) {
+			this.appContext = appContext;
+		}
+
+		@Provides
+		@Singleton
+		Bus provideBus() {
+			return new Bus();
+		}
+	}
 }
