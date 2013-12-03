@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="grey_disabled">#3C3F41</color>
+	<color name="grey_disabled">#3C3F41</color>
+	<color name="holo_dark_grey">#0C0E10</color>
+	<color name="holo_dark_grey_light">#191D20</color>
 </resources>

@@ -10,14 +10,13 @@ import android.widget.TextView;
 import at.marki.Client.R;
 import at.marki.Client.utils.Data;
 import at.marki.Client.utils.Message;
-import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 
 import java.util.UUID;
 
 /**
  * Created by marki on 30.10.13.
  */
-public class AdapterMainFragment extends BaseAdapter implements StickyListHeadersAdapter {
+public class AdapterMainFragment extends BaseAdapter {
 
 	private final LayoutInflater inflater;
 	private Context context;
@@ -28,38 +27,38 @@ public class AdapterMainFragment extends BaseAdapter implements StickyListHeader
 		this.context = fragment.getActivity();
 	}
 
-	@Override
-	public View getHeaderView(int position, View convertView, ViewGroup parent) {
-		ViewHolderHeader holder;
-		if (convertView == null) {
-			convertView = inflater.inflate(R.layout.header_lv_main, parent, false);
-			holder = new ViewHolderHeader();
-			holder.headerText = (TextView) convertView.findViewById(R.id.tv_header_lv_main);
-
-			convertView.setTag(holder);
-		} else {
-			holder = (ViewHolderHeader) convertView.getTag();
-		}
-		Message message = Data.getMessages(context).get(position);
-
-		holder.headerText.setText(message.dateString);
-		return convertView;
-	}
-
-	@Override
-	public long getHeaderId(int position) {
-		//return position;
-		return Data.getMessages(context).get(position).dateString.hashCode();
-	}
+//	@Override
+//	public View getHeaderView(int position, View convertView, ViewGroup parent) {
+//		ViewHolderHeader holder;
+//		if (convertView == null) {
+//			convertView = inflater.inflate(R.layout.header_lv_main, parent, false);
+//			holder = new ViewHolderHeader();
+//			holder.headerText = (TextView) convertView.findViewById(R.id.tv_header_lv_main);
+//
+//			convertView.setTag(holder);
+//		} else {
+//			holder = (ViewHolderHeader) convertView.getTag();
+//		}
+//		Message message = Data.getMessages(context).get(position);
+//
+//		holder.headerText.setText(message.dateString);
+//		return convertView;
+//	}
+//
+//	@Override
+//	public long getHeaderId(int position) {
+//		//return position;
+//		return Data.getMessages(context).get(position).dateString.hashCode();
+//	}
 
 
 	public static class ViewHolder {
 		public TextView message;
 	}
 
-	public static class ViewHolderHeader {
-		public TextView headerText;
-	}
+//	public static class ViewHolderHeader {
+//		public TextView headerText;
+//	}
 
 	@Override
 	public View getView(int i, View convertView, ViewGroup parent) {

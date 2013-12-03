@@ -20,7 +20,6 @@ import butterknife.Views;
 import com.google.android.gcm.GCMRegistrar;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
-import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 import timber.log.Timber;
 
 import javax.inject.Inject;
@@ -31,7 +30,7 @@ import javax.inject.Inject;
 class FragmentMain extends Fragment {
 
 	@InjectView(R.id.lv_main_messages)
-	StickyListHeadersListView messagesListView;
+	ListView messagesListView;
 
 	@Inject
 	private Bus bus;
@@ -59,7 +58,7 @@ class FragmentMain extends Fragment {
 		super.onCreateOptionsMenu(menu, inflater);
 	}
 
-	private void setUpSwipeToDismissListener(StickyListHeadersListView listView) {
+	private void setUpSwipeToDismissListener(ListView listView) {
 		SwipeDismissListViewTouchListener touchListener =
 				new SwipeDismissListViewTouchListener(
 						listView,
@@ -70,9 +69,11 @@ class FragmentMain extends Fragment {
 							}
 
 							@Override
-							public void onDismiss(StickyListHeadersListView listView, int[] reverseSortedPositions) {
+							public void onDismiss(ListView listView, int[] reverseSortedPositions) {
 								for (int position : reverseSortedPositions) {
-									Data.deleteMessage(FragmentMain.this.getActivity(), (Message) listView.getAdapter().getItem(position));
+									Message message = (Message) listView.getAdapter().getItem(position);
+									Data.deleteMessage(FragmentMain.this.getActivity(), message);
+									Data.getMessages(FragmentMain.this.getActivity()).remove(message);
 								}
 								((BaseAdapter) listView.getAdapter()).notifyDataSetChanged();
 							}
@@ -172,8 +173,6 @@ class FragmentMain extends Fragment {
 	}
 
 	private void clickStopMonitoring() {
-		//((ClientApplication) getActivity().getApplication()).pingServerMonitor.stopMonitoring(getActivity());
-		//((ClientApplication) getActivity().getApplication()).gcmCheckMonitor.stopMonitoring(getActivity());
 		((ClientApplication) getActivity().getApplication()).serverMonitor.stopMonitoring(getActivity());
 		((ClientApplication) getActivity().getApplication()).connectivityMonitor.stopMonitoring(getActivity());
 		Toast.makeText(getActivity(), "Stopping Monitoring", Toast.LENGTH_SHORT).show();

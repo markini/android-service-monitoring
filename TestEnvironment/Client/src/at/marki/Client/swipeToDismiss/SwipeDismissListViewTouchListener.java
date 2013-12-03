@@ -28,7 +28,6 @@ import android.view.ViewGroup;
 import android.view.ViewPropertyAnimator;
 import android.widget.AbsListView;
 import android.widget.ListView;
-import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -81,7 +80,7 @@ public class SwipeDismissListViewTouchListener implements View.OnTouchListener {
     private long mAnimationTime;
 
     // Fixed properties
-    private StickyListHeadersListView mListView;
+    private ListView mListView;
     private DismissCallbacks mCallbacks;
     private int mViewWidth = 1; // 1 and not 0 to prevent dividing by zero
 
@@ -113,7 +112,7 @@ public class SwipeDismissListViewTouchListener implements View.OnTouchListener {
          * @param reverseSortedPositions An array of positions to dismiss, sorted in descending
          *                               order for convenience.
          */
-        void onDismiss(StickyListHeadersListView listView, int[] reverseSortedPositions);
+        void onDismiss(ListView listView, int[] reverseSortedPositions);
     }
 
     /**
@@ -123,7 +122,7 @@ public class SwipeDismissListViewTouchListener implements View.OnTouchListener {
      * @param callbacks The callback to trigger when the user has indicated that she would like to
      *                  dismiss one or more list items.
      */
-    public SwipeDismissListViewTouchListener(StickyListHeadersListView listView, DismissCallbacks callbacks) {
+    public SwipeDismissListViewTouchListener(ListView listView, DismissCallbacks callbacks) {
         ViewConfiguration vc = ViewConfiguration.get(listView.getContext());
         mSlop = vc.getScaledTouchSlop();
         mMinFlingVelocity = vc.getScaledMinimumFlingVelocity() * 16;

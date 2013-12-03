@@ -3,13 +3,14 @@
 				android:layout_width="fill_parent"
 				android:layout_height="fill_parent">
 
-	<se.emilsjolander.stickylistheaders.StickyListHeadersListView
+	<ListView
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
 			android:paddingBottom="57dp"
 			android:id="@+id/lv_main_messages"
 			android:layout_alignParentTop="true"
-			android:transcriptMode="alwaysScroll"/>
+			android:transcriptMode="alwaysScroll"
+			android:background="@android:color/black"/>
 
 	<LinearLayout
 			android:layout_width="match_parent"
@@ -17,7 +18,8 @@
 			android:layout_alignParentBottom="true"
 			android:divider="?android:dividerHorizontal"
 			android:showDividers="middle|beginning"
-			android:orientation="vertical">
+			android:orientation="vertical"
+			android:background="@color/holo_dark_grey">
 
 		<LinearLayout
 				android:layout_width="match_parent"
