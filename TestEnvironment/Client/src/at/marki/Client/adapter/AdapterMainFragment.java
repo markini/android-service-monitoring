@@ -31,7 +31,7 @@ public class AdapterMainFragment extends BaseAdapter {
 		this.context = fragment.getActivity();
 	}
 
-	public void setSections(ArrayList<SimpleSectionedListAdapter.Section> sections) {
+	public void calculateSections(ArrayList<SimpleSectionedListAdapter.Section> sections) {
 		sections.clear();
 		headerPositions.clear();
 		Message message = null;

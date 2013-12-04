@@ -32,11 +32,14 @@ import java.util.ArrayList;
  */
 class FragmentMain extends Fragment {
 
+	protected boolean mPauseWork = false;
+	private final Object mPauseWorkLock = new Object();
+
 	private ArrayList<Section> sections = new ArrayList<Section>();
 	AdapterMainFragment adapter;
 	SimpleSectionedListAdapter simpleSectionedListAdapter;
 
-	@InjectView(R.id.lv_main_messages)
+	@InjectView(R.id.list)
 	ListView messagesListView;
 
 	@Inject
@@ -68,7 +71,7 @@ class FragmentMain extends Fragment {
 	private void setAdapter() {
 		adapter = new AdapterMainFragment(this);
 
-		adapter.setSections(sections);
+		adapter.calculateSections(sections);
 		simpleSectionedListAdapter = new SimpleSectionedListAdapter(getActivity(), R.layout.header_lv_main, adapter);
 
 		simpleSectionedListAdapter.setSections(sections.toArray(new Section[0]));
@@ -76,7 +79,7 @@ class FragmentMain extends Fragment {
 	}
 
 	private void updateAdapter() {
-		adapter.setSections(sections);
+		adapter.calculateSections(sections);
 		simpleSectionedListAdapter.setSections(sections.toArray(new Section[0]));
 		simpleSectionedListAdapter.notifyDataSetChanged();
 	}
@@ -158,7 +161,7 @@ class FragmentMain extends Fragment {
 			case R.id.menu_clear:
 				Data.getMessages(getActivity()).clear();
 				Data.deleteAllMessages(getActivity());
-				((BaseAdapter) messagesListView.getAdapter()).notifyDataSetChanged();
+				updateAdapter();
 				break;
 			case R.id.menu_start_monitor:
 				clickStartMonitoring();
@@ -215,8 +218,7 @@ class FragmentMain extends Fragment {
 		}
 		if (!Data.getMessages(getActivity()).contains(event.message)) {
 			Data.getMessages(getActivity()).add(event.message);
-			((BaseAdapter) messagesListView.getAdapter()).notifyDataSetChanged();
+			updateAdapter();
 		}
 	}
-
 }

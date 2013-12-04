@@ -7,10 +7,16 @@
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
 			android:paddingBottom="57dp"
-			android:id="@+id/lv_main_messages"
+			android:id="@+id/list"
 			android:layout_alignParentTop="true"
-			android:transcriptMode="disabled"
-			android:background="@android:color/black"/>
+			android:transcriptMode="normal"
+			android:background="@android:color/black"
+			android:scrollbarStyle="outsideOverlay"
+			android:choiceMode="singleChoice"
+			android:focusable="false"
+			android:drawSelectorOnTop="true"
+			android:fastScrollEnabled="false"
+			android:fastScrollAlwaysVisible="false"/>
 
 	<LinearLayout
 			android:layout_width="match_parent"

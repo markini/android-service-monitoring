@@ -5,6 +5,7 @@ import android.content.Context;
 import at.marki.Client.download.GetNewDataService;
 import at.marki.Client.monitoring.MonitorConnectivity;
 import at.marki.Client.monitoring.MonitorServerPing;
+import at.marki.Client.utils.Data;
 import at.marki.ServiceMonitoring.Monitor;
 import com.squareup.otto.Bus;
 import dagger.Module;
