@@ -10,6 +10,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 import at.marki.Client.adapter.AdapterMainFragment;
 import at.marki.Client.download.GetNewDataService;
+import at.marki.Client.events.FailedMessageDownloadEvent;
 import at.marki.Client.events.deleteMessagesEvent;
 import at.marki.Client.events.newMessageEvent;
 import at.marki.Client.service.RegisterGcmIdService;
@@ -250,11 +251,18 @@ class FragmentMain extends Fragment {
 		if (!Data.getMessages(getActivity()).contains(event.message)) {
 			Data.getMessages(getActivity()).add(event.message);
 			updateAdapter();
+		}else{
+			Toast.makeText(getActivity(), "No new message available", Toast.LENGTH_SHORT).show();
 		}
 	}
 
 	@Subscribe
-	public void onDeleteAllMessages(deleteMessagesEvent event){
+	public void onNewMessageEvent(FailedMessageDownloadEvent event) {
+		Toast.makeText(getActivity(), "Message download failed", Toast.LENGTH_LONG).show();
+	}
+
+	@Subscribe
+	public void onDeleteAllMessages(deleteMessagesEvent event) {
 		Data.getMessages(getActivity()).clear();
 		Data.deleteAllMessages(getActivity());
 		updateAdapter();
