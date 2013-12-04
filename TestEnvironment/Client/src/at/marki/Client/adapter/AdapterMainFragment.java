@@ -10,7 +10,10 @@ import android.widget.TextView;
 import at.marki.Client.R;
 import at.marki.Client.utils.Data;
 import at.marki.Client.utils.Message;
+import dev.dworks.libs.astickyheader.SimpleSectionedListAdapter;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -20,11 +23,32 @@ public class AdapterMainFragment extends BaseAdapter {
 
 	private final LayoutInflater inflater;
 	private Context context;
+	public List<Integer> headerPositions = new ArrayList<Integer>();
 
 	public AdapterMainFragment(Fragment fragment) {
 		Data.sortMessages(fragment.getActivity());
 		inflater = (LayoutInflater) fragment.getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		this.context = fragment.getActivity();
+	}
+
+	public void setSections(ArrayList<SimpleSectionedListAdapter.Section> sections) {
+		sections.clear();
+		headerPositions.clear();
+		Message message = null;
+		String headerText = "";
+		String tempText = "";
+		for (int i = 0; i < getCount(); i++) {
+			message = (Message) getItem(i);
+			tempText = message.dateString;
+			if (!tempText.equals(headerText)) {
+				headerText = tempText;
+				sections.add(new SimpleSectionedListAdapter.Section(i, headerText));
+				headerPositions.add(i + headerPositions.size());
+			}
+		}
+//		for (Integer in : headerPositions) {
+//			System.out.println(in);
+//		}
 	}
 
 //	@Override
@@ -99,7 +123,7 @@ public class AdapterMainFragment extends BaseAdapter {
 	}
 
 	@Override
-	public long getItemId(int id) {
-		return id;
+	public long getItemId(int position) {
+		return position;
 	}
 }

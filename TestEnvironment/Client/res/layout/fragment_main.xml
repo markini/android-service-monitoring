@@ -3,13 +3,13 @@
 				android:layout_width="fill_parent"
 				android:layout_height="fill_parent">
 
-	<ListView
+	<dev.dworks.libs.astickyheader.ui.PinnedSectionListView
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
 			android:paddingBottom="57dp"
 			android:id="@+id/lv_main_messages"
 			android:layout_alignParentTop="true"
-			android:transcriptMode="alwaysScroll"
+			android:transcriptMode="disabled"
 			android:background="@android:color/black"/>
 
 	<LinearLayout

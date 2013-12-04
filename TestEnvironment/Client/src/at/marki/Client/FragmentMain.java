@@ -20,14 +20,21 @@ import butterknife.Views;
 import com.google.android.gcm.GCMRegistrar;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
+import dev.dworks.libs.astickyheader.SimpleSectionedListAdapter;
+import dev.dworks.libs.astickyheader.SimpleSectionedListAdapter.Section;
 import timber.log.Timber;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 
 /**
  * Created by marki on 24.10.13.
  */
 class FragmentMain extends Fragment {
+
+	private ArrayList<Section> sections = new ArrayList<Section>();
+	AdapterMainFragment adapter;
+	SimpleSectionedListAdapter simpleSectionedListAdapter;
 
 	@InjectView(R.id.lv_main_messages)
 	ListView messagesListView;
@@ -47,7 +54,7 @@ class FragmentMain extends Fragment {
 		View view = inflater.inflate(R.layout.fragment_main, container, false);
 		Views.inject(this, view);
 
-		messagesListView.setAdapter(new AdapterMainFragment(this));
+		setAdapter();
 		setUpSwipeToDismissListener(messagesListView);
 		return view;
 	}
@@ -58,6 +65,22 @@ class FragmentMain extends Fragment {
 		super.onCreateOptionsMenu(menu, inflater);
 	}
 
+	private void setAdapter() {
+		adapter = new AdapterMainFragment(this);
+
+		adapter.setSections(sections);
+		simpleSectionedListAdapter = new SimpleSectionedListAdapter(getActivity(), R.layout.header_lv_main, adapter);
+
+		simpleSectionedListAdapter.setSections(sections.toArray(new Section[0]));
+		messagesListView.setAdapter(simpleSectionedListAdapter);
+	}
+
+	private void updateAdapter() {
+		adapter.setSections(sections);
+		simpleSectionedListAdapter.setSections(sections.toArray(new Section[0]));
+		simpleSectionedListAdapter.notifyDataSetChanged();
+	}
+
 	private void setUpSwipeToDismissListener(ListView listView) {
 		SwipeDismissListViewTouchListener touchListener =
 				new SwipeDismissListViewTouchListener(
@@ -65,7 +88,11 @@ class FragmentMain extends Fragment {
 						new SwipeDismissListViewTouchListener.DismissCallbacks() {
 							@Override
 							public boolean canDismiss(int position) {
-								return true;
+								if (adapter.headerPositions.contains(new Integer(position))) {
+									return false;
+								} else {
+									return true;
+								}
 							}
 
 							@Override
@@ -75,7 +102,7 @@ class FragmentMain extends Fragment {
 									Data.deleteMessage(FragmentMain.this.getActivity(), message);
 									Data.getMessages(FragmentMain.this.getActivity()).remove(message);
 								}
-								((BaseAdapter) listView.getAdapter()).notifyDataSetChanged();
+								updateAdapter();
 							}
 						});
 		listView.setOnTouchListener(touchListener);

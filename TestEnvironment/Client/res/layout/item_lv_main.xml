@@ -13,7 +13,8 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:textSize="17sp"
-			android:id="@+id/tv_item_lv_main_message"/>
+			android:id="@+id/tv_item_lv_main_message"
+			android:paddingLeft="@dimen/text_padding_left"/>
 
 </LinearLayout>
 

@@ -44,7 +44,7 @@ public class Message {
     }
 
     public String getDate(long date) {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd.MMMM.yyyy", Locale.GERMANY);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd. MMMM yyyy", Locale.GERMANY);
         Date resultTime = new Date(date);
 
         return sdf.format(resultTime);
