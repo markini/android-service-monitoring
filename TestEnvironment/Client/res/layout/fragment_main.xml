@@ -51,10 +51,7 @@
 					android:layout_height="match_parent"
 					android:text="Get Message"/>
 		</LinearLayout>
-
-
 	</LinearLayout>
-
 
 </RelativeLayout>
 

@@ -33,9 +33,9 @@ public class Message {
 
         if (id != null ? !id.equals(message.id) : message.id != null) {
             return false;
+        }else{
+	        return true;
         }
-
-        return true;
     }
 
     @Override

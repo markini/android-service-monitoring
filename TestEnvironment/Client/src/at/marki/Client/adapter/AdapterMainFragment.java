@@ -34,9 +34,9 @@ public class AdapterMainFragment extends BaseAdapter {
 	public void calculateSections(ArrayList<SimpleSectionedListAdapter.Section> sections) {
 		sections.clear();
 		headerPositions.clear();
-		Message message = null;
+		Message message;
 		String headerText = "";
-		String tempText = "";
+		String tempText;
 		for (int i = 0; i < getCount(); i++) {
 			message = (Message) getItem(i);
 			tempText = message.dateString;

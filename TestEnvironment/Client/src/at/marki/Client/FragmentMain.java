@@ -130,10 +130,19 @@ class FragmentMain extends Fragment {
 					}
 				};
 			}
+//			             @Override
+//			             public boolean canDismiss(int position) {
+//				             if (adapter.headerPositions.contains(new Integer(position))) {
+//					             return false;
+//				             } else {
+//					             return true;
+//				             }
+//			             }
 		};
 
 		SwipeDismissList.UndoMode mode = SwipeDismissList.UndoMode.SINGLE_UNDO;
 		swipeList = new SwipeDismissList(messagesListView, callback, mode);
+		swipeList.setSwipeDirection(SwipeDismissList.SwipeDirection.START);
 	}
 
 	//--------------------------------------------------------------------------------------------------

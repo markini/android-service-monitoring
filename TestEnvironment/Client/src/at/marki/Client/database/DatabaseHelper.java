@@ -85,8 +85,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			values.put(KEY_MESSAGE, message.message);
 
 			// updating row
-			int returnValue = db.update(TABLE_MESSAGES, values, KEY_ID + " = ?", new String[]{message.id});
-			return returnValue;
+			return db.update(TABLE_MESSAGES, values, KEY_ID + " = ?", new String[]{message.id});
 		} finally {
 			if (db != null) {
 				db.close();
@@ -185,11 +184,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		Cursor cursor = db.query(TABLE_MESSAGES, new String[]{KEY_ID}, KEY_ID + "=?", new String[]{id}, null, null,
 				null, null);
 		try {
-			if (cursor == null || !cursor.moveToFirst()) {
-				return false;
-			} else {
-				return true;
-			}
+			return !(cursor == null || !cursor.moveToFirst());
 		} finally {
 			if (cursor != null) {
 				cursor.close();
