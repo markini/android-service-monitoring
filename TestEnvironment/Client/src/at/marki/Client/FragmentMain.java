@@ -4,15 +4,17 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.*;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 import at.marki.Client.adapter.AdapterMainFragment;
 import at.marki.Client.download.GetNewDataService;
+import at.marki.Client.events.deleteMessagesEvent;
 import at.marki.Client.events.newMessageEvent;
 import at.marki.Client.service.RegisterGcmIdService;
-import at.marki.Client.swipeToDismiss.SwipeDismissListViewTouchListener;
 import at.marki.Client.utils.Data;
+import at.marki.Client.utils.DialogStarter;
 import at.marki.Client.utils.Message;
 import butterknife.InjectView;
 import butterknife.OnClick;
@@ -20,6 +22,7 @@ import butterknife.Views;
 import com.google.android.gcm.GCMRegistrar;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
+import de.timroes.swipetodismiss.SwipeDismissList;
 import dev.dworks.libs.astickyheader.SimpleSectionedListAdapter;
 import dev.dworks.libs.astickyheader.SimpleSectionedListAdapter.Section;
 import timber.log.Timber;
@@ -32,6 +35,8 @@ import java.util.ArrayList;
  */
 class FragmentMain extends Fragment {
 
+	public static final String TAG = "at.marki.FragmentMain";
+
 	protected boolean mPauseWork = false;
 	private final Object mPauseWorkLock = new Object();
 
@@ -41,6 +46,8 @@ class FragmentMain extends Fragment {
 
 	@InjectView(R.id.list)
 	ListView messagesListView;
+
+	private SwipeDismissList swipeList;
 
 	@Inject
 	private Bus bus;
@@ -58,7 +65,8 @@ class FragmentMain extends Fragment {
 		Views.inject(this, view);
 
 		setAdapter();
-		setUpSwipeToDismissListener(messagesListView);
+		//setUpSwipeToDismissListener(messagesListView);
+		setupSwipeToDismissListener2();
 		return view;
 	}
 
@@ -84,34 +92,47 @@ class FragmentMain extends Fragment {
 		simpleSectionedListAdapter.notifyDataSetChanged();
 	}
 
-	private void setUpSwipeToDismissListener(ListView listView) {
-		SwipeDismissListViewTouchListener touchListener =
-				new SwipeDismissListViewTouchListener(
-						listView,
-						new SwipeDismissListViewTouchListener.DismissCallbacks() {
-							@Override
-							public boolean canDismiss(int position) {
-								if (adapter.headerPositions.contains(new Integer(position))) {
-									return false;
-								} else {
-									return true;
-								}
-							}
+	private void setupSwipeToDismissListener2() {
 
-							@Override
-							public void onDismiss(ListView listView, int[] reverseSortedPositions) {
-								for (int position : reverseSortedPositions) {
-									Message message = (Message) listView.getAdapter().getItem(position);
-									Data.deleteMessage(FragmentMain.this.getActivity(), message);
-									Data.getMessages(FragmentMain.this.getActivity()).remove(message);
-								}
-								updateAdapter();
-							}
-						});
-		listView.setOnTouchListener(touchListener);
-		// Setting this scroll listener is required to ensure that during ListView scrolling,
-		// we don't look for swipes.
-		listView.setOnScrollListener(touchListener.makeScrollListener());
+		SwipeDismissList.OnDismissCallback callback = new SwipeDismissList.OnDismissCallback() {
+			// Gets called whenever the user deletes an item.
+			public SwipeDismissList.Undoable onDismiss(AbsListView listView, final int position) {
+				// Get your item from the adapter (mAdapter being an adapter for MyItem objects)
+				final Message deletedItem = (Message) listView.getAdapter().getItem(position);
+				final int positionInArray = Data.getMessages(getActivity()).indexOf(deletedItem);
+				// Delete item from adapter
+				Data.getMessages(getActivity()).remove(deletedItem);
+				updateAdapter();
+				// Return an Undoable implementing every method
+				return new SwipeDismissList.Undoable() {
+
+					// Method is called when user undoes this deletion
+					public void undo() {
+						// Reinsert item to list
+						if (positionInArray != -1) {
+							Data.getMessages(getActivity()).add(positionInArray, deletedItem);
+						} else {
+							Data.getMessages(getActivity()).add(position, deletedItem);
+						}
+						updateAdapter();
+					}
+
+					// Return an undo message for that item
+					public String getTitle() {
+						return "Message from " + deletedItem.dateString + " deleted";
+					}
+
+					// Called when user cannot undo the action anymore
+					public void discard() {
+						// Use this place to e.g. delete the item from database
+						Data.deleteMessage(getActivity(), deletedItem);
+					}
+				};
+			}
+		};
+
+		SwipeDismissList.UndoMode mode = SwipeDismissList.UndoMode.SINGLE_UNDO;
+		swipeList = new SwipeDismissList(messagesListView, callback, mode);
 	}
 
 	//--------------------------------------------------------------------------------------------------
@@ -144,6 +165,15 @@ class FragmentMain extends Fragment {
 		super.onResume();
 	}
 
+	@Override
+	public void onStop() {
+		super.onStop();
+		// Throw away all pending undos.
+		if (swipeList != null) {
+			swipeList.discardUndo();
+		}
+	}
+
 	//CLICKLISTENER ---------------------------------------------------------------------
 	//-----------------------------------------------------------------------------------
 
@@ -156,12 +186,13 @@ class FragmentMain extends Fragment {
 			case android.R.id.home:
 				break;
 			case R.id.menu_settings:
-				((MainActivity) getActivity()).startTransaction(R.id.fragment_frame, new FragmentPrefs(), MainActivity.TAG_PREFS_FRAGMENT, true);
+				((MainActivity) getActivity()).startTransaction(R.id.fragment_frame, new FragmentPrefs(), FragmentPrefs.TAG, true);
 				break;
 			case R.id.menu_clear:
-				Data.getMessages(getActivity()).clear();
-				Data.deleteAllMessages(getActivity());
-				updateAdapter();
+				DialogStarter.startDeleteDialog(getActivity());
+//				Data.getMessages(getActivity()).clear();
+//				Data.deleteAllMessages(getActivity());
+//				updateAdapter();
 				break;
 			case R.id.menu_start_monitor:
 				clickStartMonitoring();
@@ -220,5 +251,12 @@ class FragmentMain extends Fragment {
 			Data.getMessages(getActivity()).add(event.message);
 			updateAdapter();
 		}
+	}
+
+	@Subscribe
+	public void onDeleteAllMessages(deleteMessagesEvent event){
+		Data.getMessages(getActivity()).clear();
+		Data.deleteAllMessages(getActivity());
+		updateAdapter();
 	}
 }

@@ -5,6 +5,8 @@ import android.preference.PreferenceFragment;
 
 class FragmentPrefs extends PreferenceFragment {
 
+	public static final String TAG = "at.marki.FragmentPrefs";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

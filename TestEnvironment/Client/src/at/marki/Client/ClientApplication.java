@@ -2,10 +2,10 @@ package at.marki.Client;
 
 import android.app.Application;
 import android.content.Context;
+import at.marki.Client.dialogs.DeleteDialog;
 import at.marki.Client.download.GetNewDataService;
 import at.marki.Client.monitoring.MonitorConnectivity;
 import at.marki.Client.monitoring.MonitorServerPing;
-import at.marki.Client.utils.Data;
 import at.marki.ServiceMonitoring.Monitor;
 import com.squareup.otto.Bus;
 import dagger.Module;
@@ -63,6 +63,7 @@ public class ClientApplication extends Application {
 	@Module(entryPoints = {
 			MainActivity.class, //
 			FragmentMain.class, //
+			DeleteDialog.class, //
 			GetNewDataService.class //
 	})
 	static class MainModule {

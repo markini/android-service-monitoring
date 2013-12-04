@@ -51,6 +51,7 @@ public class Data {
 			databaseHelper = new DatabaseHelper(context);
 		}
 		databaseHelper.deleteMessage(message);
+		getMessages(context).remove(message);
 	}
 
 	public static void deleteAllMessages(Context context) {

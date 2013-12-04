@@ -21,9 +21,6 @@ import javax.inject.Inject;
 
 public class MainActivity extends Activity {
 
-    public static final String TAG_MAIN_FRAGMENT = "at.marki.client.fragment.main.tag";
-    public static final String TAG_PREFS_FRAGMENT = "at.marki.client.fragment.prefs.tag";
-
     private BroadcastReceiver messageReceiver;
 
     public static boolean newMessage = false;
@@ -40,12 +37,12 @@ public class MainActivity extends Activity {
         setContentView(R.layout.main);
         ((ClientApplication) getApplication()).inject(this);
         manageGCM();
-        Fragment fragmentMain = getFragmentManager().findFragmentByTag(TAG_MAIN_FRAGMENT);
+        Fragment fragmentMain = getFragmentManager().findFragmentByTag(FragmentMain.TAG);
         if (fragmentMain == null) {
             fragmentMain = new FragmentMain();
         }
 
-        startTransaction(R.id.fragment_frame, fragmentMain, TAG_MAIN_FRAGMENT, false);
+        startTransaction(R.id.fragment_frame, fragmentMain, FragmentMain.TAG, false);
     }
 
     void manageGCM() {
