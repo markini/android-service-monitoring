@@ -4,9 +4,7 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.*;
-import android.widget.AbsListView;
 import android.widget.BaseAdapter;
-import android.widget.ListView;
 import android.widget.Toast;
 import at.marki.Client.adapter.AdapterMainFragment;
 import at.marki.Client.download.GetNewDataService;
@@ -23,7 +21,7 @@ import butterknife.Views;
 import com.google.android.gcm.GCMRegistrar;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
-import de.timroes.swipetodismiss.SwipeDismissList;
+import de.timroes.android.listview.EnhancedListView;
 import dev.dworks.libs.astickyheader.SimpleSectionedListAdapter;
 import dev.dworks.libs.astickyheader.SimpleSectionedListAdapter.Section;
 import timber.log.Timber;
@@ -38,17 +36,12 @@ class FragmentMain extends Fragment {
 
 	public static final String TAG = "at.marki.FragmentMain";
 
-	protected boolean mPauseWork = false;
-	private final Object mPauseWorkLock = new Object();
-
 	private ArrayList<Section> sections = new ArrayList<Section>();
 	AdapterMainFragment adapter;
 	SimpleSectionedListAdapter simpleSectionedListAdapter;
 
 	@InjectView(R.id.list)
-	ListView messagesListView;
-
-	private SwipeDismissList swipeList;
+	EnhancedListView messagesListView;
 
 	@Inject
 	private Bus bus;
@@ -66,7 +59,6 @@ class FragmentMain extends Fragment {
 		Views.inject(this, view);
 
 		setAdapter();
-		//setUpSwipeToDismissListener(messagesListView);
 		setupSwipeToDismissListener2();
 		return view;
 	}
@@ -95,18 +87,27 @@ class FragmentMain extends Fragment {
 
 	private void setupSwipeToDismissListener2() {
 
-		SwipeDismissList.OnDismissCallback callback = new SwipeDismissList.OnDismissCallback() {
-			// Gets called whenever the user deletes an item.
-			public SwipeDismissList.Undoable onDismiss(AbsListView listView, final int position) {
+		messagesListView.setDismissCallback(new de.timroes.android.listview.EnhancedListView.OnDismissCallback() {
+			/**
+			 * This method will be called when the user swiped a way or deleted it via
+			 * {@link de.timroes.android.listview.EnhancedListView#delete(int)}.
+			 *
+			 * @param listView The {@link EnhancedListView} the item has been deleted from.
+			 * @param position The position of the item to delete from your adapter.
+			 * @return An {@link de.timroes.android.listview.EnhancedListView.Undoable}, if you want
+			 * to give the user the possibility to undo the deletion.
+			 */
+			@Override
+			public EnhancedListView.Undoable onDismiss(EnhancedListView listView, final int position) {
+
 				// Get your item from the adapter (mAdapter being an adapter for MyItem objects)
 				final Message deletedItem = (Message) listView.getAdapter().getItem(position);
 				final int positionInArray = Data.getMessages(getActivity()).indexOf(deletedItem);
 				// Delete item from adapter
 				Data.getMessages(getActivity()).remove(deletedItem);
 				updateAdapter();
-				// Return an Undoable implementing every method
-				return new SwipeDismissList.Undoable() {
 
+				return new EnhancedListView.Undoable() {
 					// Method is called when user undoes this deletion
 					public void undo() {
 						// Reinsert item to list
@@ -130,19 +131,10 @@ class FragmentMain extends Fragment {
 					}
 				};
 			}
-//			             @Override
-//			             public boolean canDismiss(int position) {
-//				             if (adapter.headerPositions.contains(new Integer(position))) {
-//					             return false;
-//				             } else {
-//					             return true;
-//				             }
-//			             }
-		};
-
-		SwipeDismissList.UndoMode mode = SwipeDismissList.UndoMode.SINGLE_UNDO;
-		swipeList = new SwipeDismissList(messagesListView, callback, mode);
-		swipeList.setSwipeDirection(SwipeDismissList.SwipeDirection.START);
+		});
+		messagesListView.enableSwipeToDismiss();
+		messagesListView.setUndoStyle(EnhancedListView.UndoStyle.SINGLE_POPUP);
+		messagesListView.setSwipeDirection(EnhancedListView.SwipeDirection.END);
 	}
 
 	//--------------------------------------------------------------------------------------------------
@@ -179,8 +171,8 @@ class FragmentMain extends Fragment {
 	public void onStop() {
 		super.onStop();
 		// Throw away all pending undos.
-		if (swipeList != null) {
-			swipeList.discardUndo();
+		if (messagesListView != null) {
+			messagesListView.discardUndo();
 		}
 	}
 
@@ -260,7 +252,7 @@ class FragmentMain extends Fragment {
 		if (!Data.getMessages(getActivity()).contains(event.message)) {
 			Data.getMessages(getActivity()).add(event.message);
 			updateAdapter();
-		}else{
+		} else {
 			Toast.makeText(getActivity(), "No new message available", Toast.LENGTH_SHORT).show();
 		}
 	}
