@@ -135,6 +135,7 @@ class FragmentMain extends Fragment {
 		messagesListView.enableSwipeToDismiss();
 		messagesListView.setUndoStyle(EnhancedListView.UndoStyle.SINGLE_POPUP);
 		messagesListView.setSwipeDirection(EnhancedListView.SwipeDirection.END);
+		messagesListView.setSwipingLayout(R.id.lin_lay_item_lv_main);
 	}
 
 	//--------------------------------------------------------------------------------------------------
