@@ -2,6 +2,7 @@ package at.marki.Client;
 
 import android.app.Fragment;
 import android.content.Intent;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.view.*;
 import android.view.animation.Animation;
@@ -43,7 +44,7 @@ class FragmentMain extends Fragment {
 	private ArrayList<Section> sections = new ArrayList<Section>();
 	private AdapterMainFragment adapter;
 	private SimpleSectionedListAdapter simpleSectionedListAdapter;
-	private boolean buttonDisabled;
+	private boolean isRefreshing;
 
 	@InjectView(R.id.list)
 	EnhancedListView messagesListView;
@@ -66,7 +67,9 @@ class FragmentMain extends Fragment {
 		View view = inflater.inflate(R.layout.fragment_main, container, false);
 		Views.inject(this, view);
 		getMessageRefresh.setVisibility(View.INVISIBLE);
-		buttonDisabled = false;
+		isRefreshing = false;
+		//View viewdd = getActivity().findViewById(R.id.menu_get_message);
+		//refreshActionImageView = (ImageView) getActivity().findViewById(R.id.iv_refresh_action_image);
 
 		setAdapter();
 		setupSwipeToDismissListener2();
@@ -75,8 +78,17 @@ class FragmentMain extends Fragment {
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		inflater.inflate(R.menu.menu_main, menu);
+		menu.clear();
 		super.onCreateOptionsMenu(menu, inflater);
+		inflater.inflate(R.menu.menu_main, menu);
+
+		if (isRefreshing) {
+			//if we're refreshing, show the animation
+			MenuItem item = menu.findItem(R.id.menu_get_message);
+			item.setActionView(R.layout.refresh_action_image);
+			ImageView iv = (ImageView) item.getActionView().findViewById(R.id.iv_refresh_action_image);
+			((AnimationDrawable) iv.getDrawable()).start();
+		}
 	}
 
 	private void setAdapter() {
@@ -204,15 +216,25 @@ class FragmentMain extends Fragment {
 				break;
 			case R.id.menu_clear:
 				DialogStarter.startDeleteDialog(getActivity());
-//				Data.getMessages(getActivity()).clear();
-//				Data.deleteAllMessages(getActivity());
-//				updateAdapter();
 				break;
 			case R.id.menu_start_monitor:
 				clickStartMonitoring();
 				break;
 			case R.id.menu_stop_monitor:
 				clickStopMonitoring();
+				break;
+			case R.id.menu_create_mock_messages:
+				Data.createMockMessages(getActivity());
+				updateAdapter();
+				break;
+			case R.id.menu_get_message:
+				if (isRefreshing) {
+					return true;
+				}
+				getMessage();
+				break;
+			case R.id.menu_register_gcm:
+				registerGcm();
 				break;
 			default:
 				return super.onOptionsItemSelected(item);
@@ -221,19 +243,18 @@ class FragmentMain extends Fragment {
 	}
 
 	@OnClick(R.id.tv_get_messages)
-	public void clickPingServerButton() {
+	public void getMessage() {
 		Timber.d("ping server");
-		if(buttonDisabled){
+		if (isRefreshing) {
 			return;
 		}
-		buttonDisabled = true;
 		startRefreshAnimation();
 		Intent intent = new Intent(getActivity(), GetNewDataService.class);
 		getActivity().startService(intent);
 	}
 
 	@OnClick(R.id.btn_show_gcm)
-	public void clickGCMButton() {
+	public void registerGcm() {
 		GCMRegistrar.setRegisteredOnServer(getActivity(), true);
 		Timber.d("gcm id = " + GCMRegistrar.getRegistrationId(getActivity()));
 
@@ -259,7 +280,8 @@ class FragmentMain extends Fragment {
 	}
 
 	private void startRefreshAnimation() {
-		RotateAnimation anim = new RotateAnimation(0f, 350f, 24f, 24f);
+		isRefreshing = true;
+		RotateAnimation anim = new RotateAnimation(0f, 360f, 24f, 24f);
 		anim.setInterpolator(new LinearInterpolator());
 		anim.setRepeatCount(Animation.INFINITE);
 		anim.setDuration(700);
@@ -267,16 +289,18 @@ class FragmentMain extends Fragment {
 		// Start animating the image
 		getMessageRefresh.setVisibility(View.VISIBLE);
 		getMessageRefresh.startAnimation(anim);
+
+		getActivity().invalidateOptionsMenu();
 	}
 
 	private void stopRefreshAnimation() {
-		buttonDisabled = false;
-		if (getMessageRefresh == null) {
-			return;
+		isRefreshing = false;
+		if (getMessageRefresh != null) {
+			getMessageRefresh.setVisibility(View.INVISIBLE);
+			getMessageRefresh.setAnimation(null);
 		}
-
-		getMessageRefresh.setVisibility(View.INVISIBLE);
-		getMessageRefresh.setAnimation(null);
+		isRefreshing = false;
+		getActivity().invalidateOptionsMenu();
 	}
 
 	//--------------------------------------------------------------------------------------------------
