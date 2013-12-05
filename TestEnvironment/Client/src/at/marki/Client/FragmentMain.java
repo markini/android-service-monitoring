@@ -4,7 +4,11 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.*;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.Toast;
 import at.marki.Client.adapter.AdapterMainFragment;
 import at.marki.Client.download.GetNewDataService;
@@ -37,11 +41,15 @@ class FragmentMain extends Fragment {
 	public static final String TAG = "at.marki.FragmentMain";
 
 	private ArrayList<Section> sections = new ArrayList<Section>();
-	AdapterMainFragment adapter;
-	SimpleSectionedListAdapter simpleSectionedListAdapter;
+	private AdapterMainFragment adapter;
+	private SimpleSectionedListAdapter simpleSectionedListAdapter;
+	private boolean buttonDisabled;
 
 	@InjectView(R.id.list)
 	EnhancedListView messagesListView;
+
+	@InjectView(R.id.iv_refresh)
+	ImageView getMessageRefresh;
 
 	@Inject
 	private Bus bus;
@@ -57,6 +65,8 @@ class FragmentMain extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_main, container, false);
 		Views.inject(this, view);
+		getMessageRefresh.setVisibility(View.INVISIBLE);
+		buttonDisabled = false;
 
 		setAdapter();
 		setupSwipeToDismissListener2();
@@ -175,6 +185,7 @@ class FragmentMain extends Fragment {
 		if (messagesListView != null) {
 			messagesListView.discardUndo();
 		}
+		stopRefreshAnimation();
 	}
 
 	//CLICKLISTENER ---------------------------------------------------------------------
@@ -209,9 +220,14 @@ class FragmentMain extends Fragment {
 		return true;
 	}
 
-	@OnClick(R.id.btn_ping_server)
+	@OnClick(R.id.tv_get_messages)
 	public void clickPingServerButton() {
 		Timber.d("ping server");
+		if(buttonDisabled){
+			return;
+		}
+		buttonDisabled = true;
+		startRefreshAnimation();
 		Intent intent = new Intent(getActivity(), GetNewDataService.class);
 		getActivity().startService(intent);
 	}
@@ -242,6 +258,27 @@ class FragmentMain extends Fragment {
 		Toast.makeText(getActivity(), "Stopping Monitoring", Toast.LENGTH_SHORT).show();
 	}
 
+	private void startRefreshAnimation() {
+		RotateAnimation anim = new RotateAnimation(0f, 350f, 24f, 24f);
+		anim.setInterpolator(new LinearInterpolator());
+		anim.setRepeatCount(Animation.INFINITE);
+		anim.setDuration(700);
+
+		// Start animating the image
+		getMessageRefresh.setVisibility(View.VISIBLE);
+		getMessageRefresh.startAnimation(anim);
+	}
+
+	private void stopRefreshAnimation() {
+		buttonDisabled = false;
+		if (getMessageRefresh == null) {
+			return;
+		}
+
+		getMessageRefresh.setVisibility(View.INVISIBLE);
+		getMessageRefresh.setAnimation(null);
+	}
+
 	//--------------------------------------------------------------------------------------------------
 	//EVENTS -------------------------------------------------------------------------------------------
 
@@ -256,11 +293,13 @@ class FragmentMain extends Fragment {
 		} else {
 			Toast.makeText(getActivity(), "No new message available", Toast.LENGTH_SHORT).show();
 		}
+		stopRefreshAnimation();
 	}
 
 	@Subscribe
 	public void onNewMessageEvent(FailedMessageDownloadEvent event) {
 		Toast.makeText(getActivity(), "Message download failed", Toast.LENGTH_LONG).show();
+		stopRefreshAnimation();
 	}
 
 	@Subscribe

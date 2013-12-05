@@ -35,7 +35,7 @@
 				android:id="@+id/lin_lay_gcm_ping"
 				style="?android:attr/buttonBarStyle">
 
-			<Button
+			<TextView
 					android:id="@+id/btn_show_gcm"
 					style="?android:attr/buttonBarButtonStyle"
 					android:layout_width="0dp"
@@ -43,13 +43,29 @@
 					android:layout_weight="1"
 					android:text="Register GCM"/>
 
-			<Button
-					android:id="@+id/btn_ping_server"
-					android:layout_weight="1"
-					style="?android:attr/buttonBarButtonStyle"
+			<LinearLayout
 					android:layout_width="0dp"
 					android:layout_height="match_parent"
-					android:text="Get Message"/>
+					android:layout_weight="1">
+
+				<TextView
+						android:id="@+id/tv_get_messages"
+						android:layout_weight="1"
+						style="?android:attr/buttonBarButtonStyle"
+						android:layout_width="0dp"
+						android:layout_height="match_parent"
+						android:text="Get Message"/>
+
+				<ImageView
+						android:layout_width="24dp"
+						android:layout_height="24dp"
+						android:src="@drawable/ic_navigation_refresh"
+						android:layout_gravity="center"
+						android:id="@+id/iv_refresh"/>
+
+			</LinearLayout>
+
+
 		</LinearLayout>
 	</LinearLayout>
 
