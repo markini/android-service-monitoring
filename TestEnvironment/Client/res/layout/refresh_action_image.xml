@@ -3,5 +3,5 @@
 		   style="@android:style/Widget.ActionButton"
 		   android:layout_width="wrap_content"
 		   android:layout_height="wrap_content"
-		   android:src="@drawable/refresh_animation"
+		   android:src="@drawable/ic_action_get_message"
 		   android:id="@+id/iv_refresh_action_image"/>

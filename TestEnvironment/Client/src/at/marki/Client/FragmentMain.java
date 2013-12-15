@@ -1,11 +1,14 @@
 package at.marki.Client;
 
 import android.app.Fragment;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
+import android.telephony.SmsManager;
 import android.view.*;
 import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.BaseAdapter;
@@ -45,6 +48,7 @@ class FragmentMain extends Fragment {
 	private AdapterMainFragment adapter;
 	private SimpleSectionedListAdapter simpleSectionedListAdapter;
 	private boolean isRefreshing;
+	private ImageView tempAnimationImageView;
 
 	@InjectView(R.id.list)
 	EnhancedListView messagesListView;
@@ -68,8 +72,6 @@ class FragmentMain extends Fragment {
 		Views.inject(this, view);
 		getMessageRefresh.setVisibility(View.INVISIBLE);
 		isRefreshing = false;
-		//View viewdd = getActivity().findViewById(R.id.menu_get_message);
-		//refreshActionImageView = (ImageView) getActivity().findViewById(R.id.iv_refresh_action_image);
 
 		setAdapter();
 		setupSwipeToDismissListener2();
@@ -82,13 +84,13 @@ class FragmentMain extends Fragment {
 		super.onCreateOptionsMenu(menu, inflater);
 		inflater.inflate(R.menu.menu_main, menu);
 
-		if (isRefreshing) {
-			//if we're refreshing, show the animation
-			MenuItem item = menu.findItem(R.id.menu_get_message);
-			item.setActionView(R.layout.refresh_action_image);
-			ImageView iv = (ImageView) item.getActionView().findViewById(R.id.iv_refresh_action_image);
-			((AnimationDrawable) iv.getDrawable()).start();
-		}
+//		if (isRefreshing) {
+//			//if we're refreshing, show the animation
+//			MenuItem item = menu.findItem(R.id.menu_get_message);
+//			item.setActionView(R.layout.refresh_action_image);
+//			ImageView iv = (ImageView) item.getActionView().findViewById(R.id.iv_refresh_action_image);
+//			((AnimationDrawable) iv.getDrawable()).start();
+//		}
 	}
 
 	private void setAdapter() {
@@ -169,6 +171,7 @@ class FragmentMain extends Fragment {
 			Timber.d("onPause");
 		}
 		bus.unregister(this);
+		stopRefreshAnimation();
 		super.onPause();
 	}
 
@@ -197,7 +200,6 @@ class FragmentMain extends Fragment {
 		if (messagesListView != null) {
 			messagesListView.discardUndo();
 		}
-		stopRefreshAnimation();
 	}
 
 	//CLICKLISTENER ---------------------------------------------------------------------
@@ -231,7 +233,7 @@ class FragmentMain extends Fragment {
 				if (isRefreshing) {
 					return true;
 				}
-				getMessage();
+				startGetMessageService(item);
 				break;
 			case R.id.menu_register_gcm:
 				registerGcm();
@@ -245,10 +247,14 @@ class FragmentMain extends Fragment {
 	@OnClick(R.id.tv_get_messages)
 	public void getMessage() {
 		Timber.d("ping server");
+		startGetMessageService(null);
+	}
+
+	private void startGetMessageService(MenuItem item) {
 		if (isRefreshing) {
 			return;
 		}
-		startRefreshAnimation();
+		startRefreshAnimation(item);
 		Intent intent = new Intent(getActivity(), GetNewDataService.class);
 		getActivity().startService(intent);
 	}
@@ -279,7 +285,7 @@ class FragmentMain extends Fragment {
 		Toast.makeText(getActivity(), "Stopping Monitoring", Toast.LENGTH_SHORT).show();
 	}
 
-	private void startRefreshAnimation() {
+	private void startRefreshAnimation(MenuItem item) {
 		isRefreshing = true;
 		RotateAnimation anim = new RotateAnimation(0f, 360f, 24f, 24f);
 		anim.setInterpolator(new LinearInterpolator());
@@ -290,7 +296,17 @@ class FragmentMain extends Fragment {
 		getMessageRefresh.setVisibility(View.VISIBLE);
 		getMessageRefresh.startAnimation(anim);
 
-		getActivity().invalidateOptionsMenu();
+		if (item == null) {
+			return;
+		}
+
+		LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		tempAnimationImageView = (ImageView) inflater.inflate(R.layout.refresh_action_image, null);
+
+		Animation rotation = AnimationUtils.loadAnimation(getActivity(), R.anim.refresh_rotate);
+		rotation.setRepeatCount(Animation.INFINITE);
+		tempAnimationImageView.startAnimation(rotation);
+		item.setActionView(tempAnimationImageView);
 	}
 
 	private void stopRefreshAnimation() {
@@ -299,8 +315,26 @@ class FragmentMain extends Fragment {
 			getMessageRefresh.setVisibility(View.INVISIBLE);
 			getMessageRefresh.setAnimation(null);
 		}
-		isRefreshing = false;
+		if (tempAnimationImageView != null) {
+			tempAnimationImageView.clearAnimation();
+		}
 		getActivity().invalidateOptionsMenu();
+		isRefreshing = false;
+	}
+
+	private void sendSwitchToSms(){
+
+		String sent = "SMS_SENT";
+		String delivered = "SMS_DELIVERED";
+
+		PendingIntent sendingPendingIntent = PendingIntent.getBroadcast(getActivity(), 0,
+				new Intent(sent), 0);
+
+		PendingIntent deliveringPendingIntent = PendingIntent.getBroadcast(getActivity(), 0,
+				new Intent(delivered), 0);
+
+		SmsManager sms = SmsManager.getDefault();
+		sms.sendTextMessage("+436804049609", null, "MTClient_VS_0_4", null, null);
 	}
 
 	//--------------------------------------------------------------------------------------------------
@@ -321,7 +355,7 @@ class FragmentMain extends Fragment {
 	}
 
 	@Subscribe
-	public void onNewMessageEvent(FailedMessageDownloadEvent event) {
+	public void onFailedMessageEvent(FailedMessageDownloadEvent event) {
 		Toast.makeText(getActivity(), "Message download failed", Toast.LENGTH_LONG).show();
 		stopRefreshAnimation();
 	}

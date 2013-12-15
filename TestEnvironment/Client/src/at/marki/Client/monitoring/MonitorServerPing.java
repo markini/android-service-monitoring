@@ -13,7 +13,7 @@ import timber.log.Timber;
 public class MonitorServerPing extends Monitor {
 
     @Override
-    public boolean monitorThis(Context context) {
+    public boolean observeThis(Context context) {
 //        if(!CheckConnectivityState.performConnectivityCheck(context)){
 //            Settingshandler.setConnectivityState(context,false);
 //            return false;
@@ -28,8 +28,8 @@ public class MonitorServerPing extends Monitor {
     }
 
     @Override
-    public boolean handleProblem(Context context) {
-        Timber.e("in handleProblem");
+    public boolean handleEvent(Context context) {
+        Timber.e("in handleEvent");
         Settingshandler.setServerState(context,false);
         return false;
     }

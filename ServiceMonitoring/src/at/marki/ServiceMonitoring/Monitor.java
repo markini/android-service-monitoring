@@ -24,9 +24,9 @@ public abstract class Monitor extends BroadcastReceiver implements Parcelable {
     /**
      * @return true if no problem and false if monitoring found a problem
      */
-    protected abstract boolean monitorThis(Context context);
+    protected abstract boolean observeThis(Context context);
 
-    protected abstract boolean handleProblem(Context context);
+    protected abstract boolean handleEvent(Context context);
 
     public void executeMonitoring(Context context, boolean startSticky, int intervalInMinutes) {
         long interval = intervalInMinutes * 60 * 1000;
@@ -60,8 +60,8 @@ public abstract class Monitor extends BroadcastReceiver implements Parcelable {
         Thread runner = new Thread(new Runnable() {
             public void run() {
                 System.out.println("Monitor this from executorservice");
-                if (!monitorThis(context)) {
-                    handleProblem(context);
+                if (!observeThis(context)) {
+                    handleEvent(context);
                 }
             }
         });

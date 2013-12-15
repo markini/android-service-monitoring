@@ -16,8 +16,8 @@ public class MonitorThisService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         System.out.println("Monitor this from intent service - from alarmmanager");
         Monitor monitor = intent.getExtras().getParcelable("monitor");
-        if(!monitor.monitorThis(this)){
-            monitor.handleProblem(this);
+        if(!monitor.observeThis(this)){
+            monitor.handleEvent(this);
         }
     }
 }
