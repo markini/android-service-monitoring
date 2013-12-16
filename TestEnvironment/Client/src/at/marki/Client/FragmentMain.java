@@ -1,9 +1,12 @@
 package at.marki.Client;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.telephony.SmsManager;
 import android.view.*;
@@ -49,6 +52,9 @@ class FragmentMain extends Fragment {
 	private SimpleSectionedListAdapter simpleSectionedListAdapter;
 	private boolean isRefreshing;
 	private ImageView tempAnimationImageView;
+
+	private BroadcastReceiver sentReceiver;
+	private BroadcastReceiver deliveringReceiver;
 
 	@InjectView(R.id.list)
 	EnhancedListView messagesListView;
@@ -172,6 +178,12 @@ class FragmentMain extends Fragment {
 		}
 		bus.unregister(this);
 		stopRefreshAnimation();
+		if (sentReceiver != null) {
+			getActivity().unregisterReceiver(sentReceiver);
+		}
+		if (deliveringReceiver != null) {
+			getActivity().unregisterReceiver(deliveringReceiver);
+		}
 		super.onPause();
 	}
 
@@ -322,19 +334,72 @@ class FragmentMain extends Fragment {
 		isRefreshing = false;
 	}
 
-	private void sendSwitchToSms(){
+	private void registerWithSms() {
 
+		PendingIntent sendingPendingIntent = registerSentReceiver();
+
+		PendingIntent deliveringPendingIntent = registerDeliveringReceiver();
+
+		GCMRegistrar.setRegisteredOnServer(getActivity(), true);
+		String gcmId = GCMRegistrar.getRegistrationId(getActivity());
+
+		SmsManager sms = SmsManager.getDefault();
+		sms.sendTextMessage(getString(R.string.server_sms_number), null, "MTClient GCM:" + gcmId, sendingPendingIntent, deliveringPendingIntent);
+	}
+
+	private PendingIntent registerSentReceiver() {
 		String sent = "SMS_SENT";
-		String delivered = "SMS_DELIVERED";
-
 		PendingIntent sendingPendingIntent = PendingIntent.getBroadcast(getActivity(), 0,
 				new Intent(sent), 0);
 
+		sentReceiver = new BroadcastReceiver() {
+			@Override
+			public void onReceive(Context arg0, Intent arg1) {
+				switch (getResultCode()) {
+					case Activity.RESULT_OK:
+
+						break;
+					case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
+
+						break;
+					case SmsManager.RESULT_ERROR_NO_SERVICE:
+
+						break;
+					case SmsManager.RESULT_ERROR_NULL_PDU:
+
+						break;
+					case SmsManager.RESULT_ERROR_RADIO_OFF:
+
+						break;
+				}
+			}
+		};
+		getActivity().registerReceiver(sentReceiver, new IntentFilter(sent));
+
+		return sendingPendingIntent;
+	}
+
+	private PendingIntent registerDeliveringReceiver() {
+		String delivered = "SMS_DELIVERED";
 		PendingIntent deliveringPendingIntent = PendingIntent.getBroadcast(getActivity(), 0,
 				new Intent(delivered), 0);
 
-		SmsManager sms = SmsManager.getDefault();
-		sms.sendTextMessage("+436804049609", null, "MTClient_VS_0_4", null, null);
+		deliveringReceiver = new BroadcastReceiver() {
+			@Override
+			public void onReceive(Context arg0, Intent arg1) {
+				switch (getResultCode()) {
+					case Activity.RESULT_OK:
+
+						break;
+					case Activity.RESULT_CANCELED:
+
+						break;
+				}
+			}
+		};
+		getActivity().registerReceiver(deliveringReceiver, new IntentFilter(delivered));
+
+		return deliveringPendingIntent;
 	}
 
 	//--------------------------------------------------------------------------------------------------
