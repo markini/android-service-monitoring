@@ -9,14 +9,15 @@
 
 	<View
 			android:layout_width="0dp"
-			android:layout_height="65dp"/>
+			android:layout_height="80dp"/>
 
 	<TextView
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:textSize="17sp"
 			android:id="@+id/tv_item_lv_main_message"
-			android:paddingLeft="@dimen/text_padding_left"/>
+			android:paddingLeft="@dimen/text_padding_left"
+			android:maxLines="4"/>
 
 </LinearLayout>
 

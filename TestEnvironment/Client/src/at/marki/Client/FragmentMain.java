@@ -16,6 +16,7 @@ import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.Toast;
 import at.marki.Client.adapter.AdapterMainFragment;
 import at.marki.Client.download.GetNewDataService;
@@ -30,9 +31,9 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import butterknife.Views;
 import com.google.android.gcm.GCMRegistrar;
+import com.haarman.listviewanimations.itemmanipulation.contextualundo.ContextualUndoAdapter;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
-import de.timroes.android.listview.EnhancedListView;
 import dev.dworks.libs.astickyheader.SimpleSectionedListAdapter;
 import dev.dworks.libs.astickyheader.SimpleSectionedListAdapter.Section;
 import timber.log.Timber;
@@ -43,13 +44,13 @@ import java.util.ArrayList;
 /**
  * Created by marki on 24.10.13.
  */
-class FragmentMain extends Fragment {
+class FragmentMain extends Fragment implements ContextualUndoAdapter.DeleteItemCallback {
 
 	public static final String TAG = "at.marki.FragmentMain";
 
 	private ArrayList<Section> sections = new ArrayList<Section>();
-	private AdapterMainFragment adapter;
-	private SimpleSectionedListAdapter simpleSectionedListAdapter;
+	private AdapterMainFragment baseAdapter;
+	private SimpleSectionedListAdapter adapter;
 	private boolean isRefreshing;
 	private ImageView tempAnimationImageView;
 
@@ -57,7 +58,7 @@ class FragmentMain extends Fragment {
 	private BroadcastReceiver deliveringReceiver;
 
 	@InjectView(R.id.list)
-	EnhancedListView messagesListView;
+	ListView messagesListView;
 
 	@InjectView(R.id.iv_refresh)
 	ImageView getMessageRefresh;
@@ -80,7 +81,7 @@ class FragmentMain extends Fragment {
 		isRefreshing = false;
 
 		setAdapter();
-		setupSwipeToDismissListener2();
+		setupDismissUndoAdapter();
 		return view;
 	}
 
@@ -100,72 +101,36 @@ class FragmentMain extends Fragment {
 	}
 
 	private void setAdapter() {
-		adapter = new AdapterMainFragment(this);
+		baseAdapter = new AdapterMainFragment(this);
 
-		adapter.calculateSections(sections);
-		simpleSectionedListAdapter = new SimpleSectionedListAdapter(getActivity(), R.layout.header_lv_main, adapter);
+		baseAdapter.calculateSections(sections);
+		adapter = new SimpleSectionedListAdapter(getActivity(), R.layout.header_lv_main, baseAdapter);
 
-		simpleSectionedListAdapter.setSections(sections.toArray(new Section[0]));
-		messagesListView.setAdapter(simpleSectionedListAdapter);
+		adapter.setSections(sections.toArray(new Section[0]));
 	}
 
 	private void updateAdapter() {
-		adapter.calculateSections(sections);
-		simpleSectionedListAdapter.setSections(sections.toArray(new Section[0]));
-		simpleSectionedListAdapter.notifyDataSetChanged();
+		baseAdapter.calculateSections(sections);
+		adapter.setSections(sections.toArray(new Section[0]));
+		adapter.notifyDataSetChanged();
 	}
 
-	private void setupSwipeToDismissListener2() {
+	private void setupDismissUndoAdapter() {
+		ContextualUndoAdapter contextualUndoAdapter = new ContextualUndoAdapter(adapter, R.layout.undo_row, R.id.undo_row_undobutton, 3000, R.id.undo_row_texttv, new MyFormatCountDownCallback());
+		contextualUndoAdapter.setAbsListView(messagesListView);
+		messagesListView.setAdapter(contextualUndoAdapter);
+		contextualUndoAdapter.setDeleteItemCallback(this);
+	}
 
-		messagesListView.setDismissCallback(new de.timroes.android.listview.EnhancedListView.OnDismissCallback() {
-			/**
-			 * This method will be called when the user swiped a way or deleted it via
-			 * {@link de.timroes.android.listview.EnhancedListView#delete(int)}.
-			 *
-			 * @param listView The {@link EnhancedListView} the item has been deleted from.
-			 * @param position The position of the item to delete from your adapter.
-			 * @return An {@link de.timroes.android.listview.EnhancedListView.Undoable}, if you want
-			 * to give the user the possibility to undo the deletion.
-			 */
-			@Override
-			public EnhancedListView.Undoable onDismiss(EnhancedListView listView, final int position) {
+	@Override
+	public void deleteItem(int position) {
+		Object deletedItem = messagesListView.getAdapter().getItem(position);
+		Data.getMessages(getActivity()).remove(deletedItem);
+		if (deletedItem instanceof Message) {
+			Data.deleteMessage(getActivity(), (Message) deletedItem);
+		}
 
-				// Get your item from the adapter (mAdapter being an adapter for MyItem objects)
-				final Message deletedItem = (Message) listView.getAdapter().getItem(position);
-				final int positionInArray = Data.getMessages(getActivity()).indexOf(deletedItem);
-				// Delete item from adapter
-				Data.getMessages(getActivity()).remove(deletedItem);
-				updateAdapter();
-
-				return new EnhancedListView.Undoable() {
-					// Method is called when user undoes this deletion
-					public void undo() {
-						// Reinsert item to list
-						if (positionInArray != -1) {
-							Data.getMessages(getActivity()).add(positionInArray, deletedItem);
-						} else {
-							Data.getMessages(getActivity()).add(position, deletedItem);
-						}
-						updateAdapter();
-					}
-
-					// Return an undo message for that item
-					public String getTitle() {
-						return "Message from " + deletedItem.dateString + " deleted";
-					}
-
-					// Called when user cannot undo the action anymore
-					public void discard() {
-						// Use this place to e.g. delete the item from database
-						Data.deleteMessage(getActivity(), deletedItem);
-					}
-				};
-			}
-		});
-		messagesListView.enableSwipeToDismiss();
-		messagesListView.setUndoStyle(EnhancedListView.UndoStyle.SINGLE_POPUP);
-		messagesListView.setSwipeDirection(EnhancedListView.SwipeDirection.END);
-		messagesListView.setSwipingLayout(R.id.lin_lay_item_lv_main);
+		updateAdapter();
 	}
 
 	//--------------------------------------------------------------------------------------------------
@@ -208,10 +173,6 @@ class FragmentMain extends Fragment {
 	@Override
 	public void onStop() {
 		super.onStop();
-		// Throw away all pending undos.
-		if (messagesListView != null) {
-			messagesListView.discardUndo();
-		}
 	}
 
 	//CLICKLISTENER ---------------------------------------------------------------------
@@ -430,5 +391,20 @@ class FragmentMain extends Fragment {
 		Data.getMessages(getActivity()).clear();
 		Data.deleteAllMessages(getActivity());
 		updateAdapter();
+	}
+
+	//--------------------------------------------------------------------------------------------------
+	//SUB CLASSES --------------------------------------------------------------------------------------
+	private class MyFormatCountDownCallback implements ContextualUndoAdapter.CountDownFormatter {
+
+		@Override
+		public String getCountDownString(long millisUntilFinished) {
+			int seconds = (int) Math.ceil((millisUntilFinished / 1000.0));
+
+			if (seconds > 0) {
+				return getResources().getQuantityString(R.plurals.countdown_seconds, seconds, seconds);
+			}
+			return getString(R.string.countdown_dismissing);
+		}
 	}
 }

@@ -10,14 +10,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class ServletPing extends HttpServlet {
+public class ServletServerStatus extends HttpServlet {
 
-    private static final String TAG = "ServletPing";
+    private static final String TAG = "ServletServerStatus";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-        // DATABASE CALL -----------------------------------------------------------------------
 
         response.setStatus(HttpServletResponse.SC_OK);
 

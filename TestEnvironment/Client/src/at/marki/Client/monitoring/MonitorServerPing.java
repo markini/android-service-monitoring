@@ -31,6 +31,7 @@ public class MonitorServerPing extends Monitor {
     public boolean handleEvent(Context context) {
         Timber.e("in handleEvent");
         Settingshandler.setServerState(context,false);
+	    //TODO send sms and mail to admin (this is me, and this is a test environment - so better not)
         return false;
     }
 

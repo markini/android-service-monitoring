@@ -63,7 +63,6 @@ public class MainActivity extends Activity {
 				Timber.d("Already registered");
 			}
 		}
-
 		GCMRegistrar.setRegisteredOnServer(this, true);
 	}
 

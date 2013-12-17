@@ -12,7 +12,7 @@ import java.io.IOException;
 
 public class ServletCheckGCM extends HttpServlet {
 
-    private static final String TAG = "ServletPing";
+    private static final String TAG = "ServletServerStatus";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
