@@ -1,8 +1,9 @@
-package at.marki.Client;
+package at.marki.Client.receiver;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import at.marki.Client.R;
 import com.google.android.gcm.GCMBaseIntentService;
 import com.squareup.otto.Bus;
 import timber.log.Timber;

@@ -37,7 +37,7 @@ class GetNewDataAsyncTask extends AsyncTask<Void, Message, Message> {
 				String messageString = jsonObject.getString("message");
 				String messageId = jsonObject.getString("messageId");
 				Message message = new Message(messageId, messageString, System.currentTimeMillis());
-				Data.addMessage(context, message);
+				Data.addMessage(context, message); //saves message on the database
 				return message;
 			} else if (request.notFound()) {
 				return null;

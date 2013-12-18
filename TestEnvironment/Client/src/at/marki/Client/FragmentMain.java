@@ -1,11 +1,21 @@
 package at.marki.Client;
 
+import android.app.Activity;
 import android.app.Fragment;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.telephony.SmsManager;
 import android.view.*;
-import android.widget.AbsListView;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 import at.marki.Client.adapter.AdapterMainFragment;
@@ -21,9 +31,9 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import butterknife.Views;
 import com.google.android.gcm.GCMRegistrar;
+import com.haarman.listviewanimations.itemmanipulation.contextualundo.ContextualUndoAdapter;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
-import de.timroes.swipetodismiss.SwipeDismissList;
 import dev.dworks.libs.astickyheader.SimpleSectionedListAdapter;
 import dev.dworks.libs.astickyheader.SimpleSectionedListAdapter.Section;
 import timber.log.Timber;
@@ -34,21 +44,24 @@ import java.util.ArrayList;
 /**
  * Created by marki on 24.10.13.
  */
-class FragmentMain extends Fragment {
+class FragmentMain extends Fragment implements ContextualUndoAdapter.DeleteItemCallback {
 
 	public static final String TAG = "at.marki.FragmentMain";
 
-	protected boolean mPauseWork = false;
-	private final Object mPauseWorkLock = new Object();
-
 	private ArrayList<Section> sections = new ArrayList<Section>();
-	AdapterMainFragment adapter;
-	SimpleSectionedListAdapter simpleSectionedListAdapter;
+	private AdapterMainFragment baseAdapter;
+	private SimpleSectionedListAdapter adapter;
+	private boolean isRefreshing;
+	private ImageView tempAnimationImageView;
+
+	private BroadcastReceiver sentReceiver;
+	private BroadcastReceiver deliveringReceiver;
 
 	@InjectView(R.id.list)
 	ListView messagesListView;
 
-	private SwipeDismissList swipeList;
+	@InjectView(R.id.iv_refresh)
+	ImageView getMessageRefresh;
 
 	@Inject
 	private Bus bus;
@@ -64,85 +77,60 @@ class FragmentMain extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_main, container, false);
 		Views.inject(this, view);
+		getMessageRefresh.setVisibility(View.INVISIBLE);
+		isRefreshing = false;
 
 		setAdapter();
-		//setUpSwipeToDismissListener(messagesListView);
-		setupSwipeToDismissListener2();
+		setupDismissUndoAdapter();
 		return view;
 	}
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		inflater.inflate(R.menu.menu_main, menu);
+		menu.clear();
 		super.onCreateOptionsMenu(menu, inflater);
+		inflater.inflate(R.menu.menu_main, menu);
+
+//		if (isRefreshing) {
+//			//if we're refreshing, show the animation
+//			MenuItem item = menu.findItem(R.id.menu_get_message);
+//			item.setActionView(R.layout.refresh_action_image);
+//			ImageView iv = (ImageView) item.getActionView().findViewById(R.id.iv_refresh_action_image);
+//			((AnimationDrawable) iv.getDrawable()).start();
+//		}
 	}
 
 	private void setAdapter() {
-		adapter = new AdapterMainFragment(this);
+		baseAdapter = new AdapterMainFragment(this);
 
-		adapter.calculateSections(sections);
-		simpleSectionedListAdapter = new SimpleSectionedListAdapter(getActivity(), R.layout.header_lv_main, adapter);
+		baseAdapter.calculateSections(sections);
+		adapter = new SimpleSectionedListAdapter(getActivity(), R.layout.header_lv_main, baseAdapter);
 
-		simpleSectionedListAdapter.setSections(sections.toArray(new Section[0]));
-		messagesListView.setAdapter(simpleSectionedListAdapter);
+		adapter.setSections(sections.toArray(new Section[0]));
 	}
 
 	private void updateAdapter() {
-		adapter.calculateSections(sections);
-		simpleSectionedListAdapter.setSections(sections.toArray(new Section[0]));
-		simpleSectionedListAdapter.notifyDataSetChanged();
+		baseAdapter.calculateSections(sections);
+		adapter.setSections(sections.toArray(new Section[0]));
+		adapter.notifyDataSetChanged();
 	}
 
-	private void setupSwipeToDismissListener2() {
+	private void setupDismissUndoAdapter() {
+		ContextualUndoAdapter contextualUndoAdapter = new ContextualUndoAdapter(adapter, R.layout.undo_row, R.id.undo_row_undobutton, 3000, R.id.undo_row_texttv, new MyFormatCountDownCallback());
+		contextualUndoAdapter.setAbsListView(messagesListView);
+		messagesListView.setAdapter(contextualUndoAdapter);
+		contextualUndoAdapter.setDeleteItemCallback(this);
+	}
 
-		SwipeDismissList.OnDismissCallback callback = new SwipeDismissList.OnDismissCallback() {
-			// Gets called whenever the user deletes an item.
-			public SwipeDismissList.Undoable onDismiss(AbsListView listView, final int position) {
-				// Get your item from the adapter (mAdapter being an adapter for MyItem objects)
-				final Message deletedItem = (Message) listView.getAdapter().getItem(position);
-				final int positionInArray = Data.getMessages(getActivity()).indexOf(deletedItem);
-				// Delete item from adapter
-				Data.getMessages(getActivity()).remove(deletedItem);
-				updateAdapter();
-				// Return an Undoable implementing every method
-				return new SwipeDismissList.Undoable() {
+	@Override
+	public void deleteItem(int position) {
+		Object deletedItem = messagesListView.getAdapter().getItem(position);
+		Data.getMessages(getActivity()).remove(deletedItem);
+		if (deletedItem instanceof Message) {
+			Data.deleteMessage(getActivity(), (Message) deletedItem);
+		}
 
-					// Method is called when user undoes this deletion
-					public void undo() {
-						// Reinsert item to list
-						if (positionInArray != -1) {
-							Data.getMessages(getActivity()).add(positionInArray, deletedItem);
-						} else {
-							Data.getMessages(getActivity()).add(position, deletedItem);
-						}
-						updateAdapter();
-					}
-
-					// Return an undo message for that item
-					public String getTitle() {
-						return "Message from " + deletedItem.dateString + " deleted";
-					}
-
-					// Called when user cannot undo the action anymore
-					public void discard() {
-						// Use this place to e.g. delete the item from database
-						Data.deleteMessage(getActivity(), deletedItem);
-					}
-				};
-			}
-//			             @Override
-//			             public boolean canDismiss(int position) {
-//				             if (adapter.headerPositions.contains(new Integer(position))) {
-//					             return false;
-//				             } else {
-//					             return true;
-//				             }
-//			             }
-		};
-
-		SwipeDismissList.UndoMode mode = SwipeDismissList.UndoMode.SINGLE_UNDO;
-		swipeList = new SwipeDismissList(messagesListView, callback, mode);
-		swipeList.setSwipeDirection(SwipeDismissList.SwipeDirection.START);
+		updateAdapter();
 	}
 
 	//--------------------------------------------------------------------------------------------------
@@ -154,6 +142,13 @@ class FragmentMain extends Fragment {
 			Timber.d("onPause");
 		}
 		bus.unregister(this);
+		stopRefreshAnimation();
+		if (sentReceiver != null) {
+			getActivity().unregisterReceiver(sentReceiver);
+		}
+		if (deliveringReceiver != null) {
+			getActivity().unregisterReceiver(deliveringReceiver);
+		}
 		super.onPause();
 	}
 
@@ -178,10 +173,6 @@ class FragmentMain extends Fragment {
 	@Override
 	public void onStop() {
 		super.onStop();
-		// Throw away all pending undos.
-		if (swipeList != null) {
-			swipeList.discardUndo();
-		}
 	}
 
 	//CLICKLISTENER ---------------------------------------------------------------------
@@ -200,9 +191,6 @@ class FragmentMain extends Fragment {
 				break;
 			case R.id.menu_clear:
 				DialogStarter.startDeleteDialog(getActivity());
-//				Data.getMessages(getActivity()).clear();
-//				Data.deleteAllMessages(getActivity());
-//				updateAdapter();
 				break;
 			case R.id.menu_start_monitor:
 				clickStartMonitoring();
@@ -210,21 +198,42 @@ class FragmentMain extends Fragment {
 			case R.id.menu_stop_monitor:
 				clickStopMonitoring();
 				break;
+			case R.id.menu_create_mock_messages:
+				Data.createMockMessages(getActivity());
+				updateAdapter();
+				break;
+			case R.id.menu_get_message:
+				if (isRefreshing) {
+					return true;
+				}
+				startGetMessageService(item);
+				break;
+			case R.id.menu_register_gcm:
+				registerGcm();
+				break;
 			default:
 				return super.onOptionsItemSelected(item);
 		}
 		return true;
 	}
 
-	@OnClick(R.id.btn_ping_server)
-	public void clickPingServerButton() {
+	@OnClick(R.id.tv_get_messages)
+	public void getMessage() {
 		Timber.d("ping server");
+		startGetMessageService(null);
+	}
+
+	private void startGetMessageService(MenuItem item) {
+		if (isRefreshing) {
+			return;
+		}
+		startRefreshAnimation(item);
 		Intent intent = new Intent(getActivity(), GetNewDataService.class);
 		getActivity().startService(intent);
 	}
 
 	@OnClick(R.id.btn_show_gcm)
-	public void clickGCMButton() {
+	public void registerGcm() {
 		GCMRegistrar.setRegisteredOnServer(getActivity(), true);
 		Timber.d("gcm id = " + GCMRegistrar.getRegistrationId(getActivity()));
 
@@ -249,6 +258,111 @@ class FragmentMain extends Fragment {
 		Toast.makeText(getActivity(), "Stopping Monitoring", Toast.LENGTH_SHORT).show();
 	}
 
+	private void startRefreshAnimation(MenuItem item) {
+		isRefreshing = true;
+		RotateAnimation anim = new RotateAnimation(0f, 360f, 24f, 24f);
+		anim.setInterpolator(new LinearInterpolator());
+		anim.setRepeatCount(Animation.INFINITE);
+		anim.setDuration(700);
+
+		// Start animating the image
+		getMessageRefresh.setVisibility(View.VISIBLE);
+		getMessageRefresh.startAnimation(anim);
+
+		if (item == null) {
+			return;
+		}
+
+		LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		tempAnimationImageView = (ImageView) inflater.inflate(R.layout.refresh_action_image, null);
+
+		Animation rotation = AnimationUtils.loadAnimation(getActivity(), R.anim.refresh_rotate);
+		rotation.setRepeatCount(Animation.INFINITE);
+		tempAnimationImageView.startAnimation(rotation);
+		item.setActionView(tempAnimationImageView);
+	}
+
+	private void stopRefreshAnimation() {
+		isRefreshing = false;
+		if (getMessageRefresh != null) {
+			getMessageRefresh.setVisibility(View.INVISIBLE);
+			getMessageRefresh.setAnimation(null);
+		}
+		if (tempAnimationImageView != null) {
+			tempAnimationImageView.clearAnimation();
+		}
+		getActivity().invalidateOptionsMenu();
+		isRefreshing = false;
+	}
+
+	private void registerWithSms() {
+
+		PendingIntent sendingPendingIntent = registerSentReceiver();
+
+		PendingIntent deliveringPendingIntent = registerDeliveringReceiver();
+
+		GCMRegistrar.setRegisteredOnServer(getActivity(), true);
+		String gcmId = GCMRegistrar.getRegistrationId(getActivity());
+
+		SmsManager sms = SmsManager.getDefault();
+		sms.sendTextMessage(getString(R.string.server_sms_number), null, "MTClient GCM:" + gcmId, sendingPendingIntent, deliveringPendingIntent);
+	}
+
+	private PendingIntent registerSentReceiver() {
+		String sent = "SMS_SENT";
+		PendingIntent sendingPendingIntent = PendingIntent.getBroadcast(getActivity(), 0,
+				new Intent(sent), 0);
+
+		sentReceiver = new BroadcastReceiver() {
+			@Override
+			public void onReceive(Context arg0, Intent arg1) {
+				switch (getResultCode()) {
+					case Activity.RESULT_OK:
+
+						break;
+					case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
+
+						break;
+					case SmsManager.RESULT_ERROR_NO_SERVICE:
+
+						break;
+					case SmsManager.RESULT_ERROR_NULL_PDU:
+
+						break;
+					case SmsManager.RESULT_ERROR_RADIO_OFF:
+
+						break;
+				}
+			}
+		};
+		getActivity().registerReceiver(sentReceiver, new IntentFilter(sent));
+
+		return sendingPendingIntent;
+	}
+
+	private PendingIntent registerDeliveringReceiver() {
+		String delivered = "SMS_DELIVERED";
+		PendingIntent deliveringPendingIntent = PendingIntent.getBroadcast(getActivity(), 0,
+				new Intent(delivered), 0);
+
+		deliveringReceiver = new BroadcastReceiver() {
+			@Override
+			public void onReceive(Context arg0, Intent arg1) {
+				switch (getResultCode()) {
+					case Activity.RESULT_OK:
+
+						break;
+					case Activity.RESULT_CANCELED:
+
+						break;
+				}
+			}
+		};
+		getActivity().registerReceiver(deliveringReceiver, new IntentFilter(delivered));
+
+		return deliveringPendingIntent;
+	}
+
 	//--------------------------------------------------------------------------------------------------
 	//EVENTS -------------------------------------------------------------------------------------------
 
@@ -260,14 +374,16 @@ class FragmentMain extends Fragment {
 		if (!Data.getMessages(getActivity()).contains(event.message)) {
 			Data.getMessages(getActivity()).add(event.message);
 			updateAdapter();
-		}else{
+		} else {
 			Toast.makeText(getActivity(), "No new message available", Toast.LENGTH_SHORT).show();
 		}
+		stopRefreshAnimation();
 	}
 
 	@Subscribe
-	public void onNewMessageEvent(FailedMessageDownloadEvent event) {
+	public void onFailedMessageEvent(FailedMessageDownloadEvent event) {
 		Toast.makeText(getActivity(), "Message download failed", Toast.LENGTH_LONG).show();
+		stopRefreshAnimation();
 	}
 
 	@Subscribe
@@ -275,5 +391,20 @@ class FragmentMain extends Fragment {
 		Data.getMessages(getActivity()).clear();
 		Data.deleteAllMessages(getActivity());
 		updateAdapter();
+	}
+
+	//--------------------------------------------------------------------------------------------------
+	//SUB CLASSES --------------------------------------------------------------------------------------
+	private class MyFormatCountDownCallback implements ContextualUndoAdapter.CountDownFormatter {
+
+		@Override
+		public String getCountDownString(long millisUntilFinished) {
+			int seconds = (int) Math.ceil((millisUntilFinished / 1000.0));
+
+			if (seconds > 0) {
+				return getResources().getQuantityString(R.plurals.countdown_seconds, seconds, seconds);
+			}
+			return getString(R.string.countdown_dismissing);
+		}
 	}
 }

@@ -3,7 +3,7 @@ package at.marki.Server.Server;
 import at.marki.Server.Servlet.ServletRegisterGcmId;
 import at.marki.Server.Servlet.ServletCheckGCM;
 import at.marki.Server.Servlet.ServletGetNewData;
-import at.marki.Server.Servlet.ServletPing;
+import at.marki.Server.Servlet.ServletServerStatus;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -20,7 +20,7 @@ public class SimpleJettyServer {
 
 		context.addServlet(new ServletHolder(new ServletGetNewData()), "/getData");
 
-        context.addServlet(new ServletHolder(new ServletPing()), "/ping");
+        context.addServlet(new ServletHolder(new ServletServerStatus()), "/ping");
 
         context.addServlet(new ServletHolder(new ServletCheckGCM()), "/gcmCheck");
 

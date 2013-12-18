@@ -10,8 +10,9 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:singleLine="true"
-			android:textSize="15sp"
-			android:paddingLeft="@dimen/text_padding_left"
+			android:textSize="21sp"
+			android:padding="3dp"
+			android:textStyle="bold"
 			android:background="@color/grey_disabled"
 			android:textIsSelectable="false"/>
 

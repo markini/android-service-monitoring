@@ -13,7 +13,7 @@ import timber.log.Timber;
 public class MonitorGcmCheck extends Monitor {
 
     @Override
-    public boolean monitorThis(Context context) {
+    public boolean observeThis(Context context) {
         if(!CheckConnectivityState.performConnectivityCheck(context)){
             Settingshandler.setConnectivityState(context,false);
             return false;
@@ -37,9 +37,9 @@ public class MonitorGcmCheck extends Monitor {
     }
 
     @Override
-    public boolean handleProblem(Context context) {
+    public boolean handleEvent(Context context) {
         Settingshandler.setGcmState(context, false);
-        Timber.e("in handleProblem");
+        Timber.e("in handleEvent");
         return false;
     }
 

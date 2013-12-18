@@ -12,13 +12,13 @@ import timber.log.Timber;
 public class TestMonitor1 extends Monitor {
 
     @Override
-    public boolean monitorThis(Context context) {
+    public boolean observeThis(Context context) {
         Timber.d("Monitor this called execution process");
         return true;
     }
 
     @Override
-    public boolean handleProblem(Context context) {
+    public boolean handleEvent(Context context) {
         Timber.d("Handle problem called execution process");
         return true;
     }

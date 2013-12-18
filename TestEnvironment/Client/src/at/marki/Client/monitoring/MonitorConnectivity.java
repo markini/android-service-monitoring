@@ -13,7 +13,7 @@ import timber.log.Timber;
 public class MonitorConnectivity extends Monitor {
 
     @Override
-    public boolean monitorThis(Context context) {
+    public boolean observeThis(Context context) {
         if(CheckConnectivityState.performConnectivityCheck(context)){
             Settingshandler.setConnectivityState(context, true);
             return true;
@@ -23,9 +23,9 @@ public class MonitorConnectivity extends Monitor {
     }
 
     @Override
-    public boolean handleProblem(Context context) {
+    public boolean handleEvent(Context context) {
         Settingshandler.setConnectivityState(context, false);
-        Timber.e("in handleProblem");
+        Timber.e("in handleEvent");
         return false;
     }
 
