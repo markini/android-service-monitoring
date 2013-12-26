@@ -3,6 +3,7 @@ package at.marki.Client.monitoring;
 import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
+import at.marki.Client.EventHandler;
 import at.marki.Client.utils.Settingshandler;
 import at.marki.ServiceMonitoring.Monitor;
 import timber.log.Timber;
@@ -32,6 +33,7 @@ public class MonitorServerPing extends Monitor {
         Timber.e("in handleEvent");
         Settingshandler.setServerState(context,false);
 	    //TODO send sms and mail to admin (this is me, and this is a test environment - so better not)
+	    EventHandler.calculateApplicationEvent(context);
         return false;
     }
 

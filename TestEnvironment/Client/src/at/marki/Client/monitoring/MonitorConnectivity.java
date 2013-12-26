@@ -3,6 +3,7 @@ package at.marki.Client.monitoring;
 import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
+import at.marki.Client.EventHandler;
 import at.marki.Client.utils.Settingshandler;
 import at.marki.ServiceMonitoring.Monitor;
 import timber.log.Timber;
@@ -26,6 +27,7 @@ public class MonitorConnectivity extends Monitor {
     public boolean handleEvent(Context context) {
         Settingshandler.setConnectivityState(context, false);
         Timber.e("in handleEvent");
+	    EventHandler.calculateApplicationEvent(context);
         return false;
     }
 

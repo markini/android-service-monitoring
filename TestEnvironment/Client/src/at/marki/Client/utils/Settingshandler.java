@@ -3,6 +3,7 @@ package at.marki.Client.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import at.marki.Client.monitoring.ApplicationState;
 
 /**
  * Created by marki on 29.10.13.
@@ -66,4 +67,15 @@ public class Settingshandler {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         prefs.edit().putBoolean("tag_connectivity_state",state).commit();
     }
+
+	//application state -------------------------------------------------------------------
+	public static ApplicationState getApplicationState(Context context){
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		return ApplicationState.VALUES.get(prefs.getString("tag_application_state",ApplicationState.TYPE_DEFAULT.getName()));
+	}
+
+	public static void setApplicationState(Context context, ApplicationState state){
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		prefs.edit().putString("tag_application_state",state.getName()).commit();
+	}
 }
