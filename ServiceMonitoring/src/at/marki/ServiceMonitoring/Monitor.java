@@ -69,11 +69,23 @@ public abstract class Monitor extends BroadcastReceiver implements Parcelable {
         mHandler = scheduler.scheduleAtFixedRate(runner, 1000, interval, MILLISECONDS); //starts in one second
     }
 
+    /**
+     * Sets the AlarmManager to start the monitor
+     * continuously in the given interval.
+     * The monitor is started after one second.
+     *
+     * @param context  the application context
+     * @param interval the interval in which the
+     *                 monitor executes (in milliseconds)
+     */
     private void startAlarmTask(Context context, long interval) {
         Intent intent = new Intent(context, this.getClass());
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-        AlarmManager alarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        alarm.setRepeating(AlarmManager.RTC, System.currentTimeMillis() + 1000, interval, pendingIntent);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        AlarmManager alarm = (AlarmManager) context.getSystemService(
+                Context.ALARM_SERVICE);
+        alarm.setRepeating(AlarmManager.RTC, System.currentTimeMillis()
+                + 1000, interval, pendingIntent);
     }
 
     @Override

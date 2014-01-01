@@ -28,7 +28,6 @@ import at.marki.Client.utils.Data;
 import at.marki.Client.utils.DialogStarter;
 import at.marki.Client.utils.Message;
 import butterknife.InjectView;
-import butterknife.OnClick;
 import butterknife.Views;
 import com.google.android.gcm.GCMRegistrar;
 import com.haarman.listviewanimations.itemmanipulation.contextualundo.ContextualUndoAdapter;
@@ -60,9 +59,6 @@ class FragmentMain extends Fragment implements ContextualUndoAdapter.DeleteItemC
 	@InjectView(R.id.list)
 	ListView messagesListView;
 
-	@InjectView(R.id.iv_refresh)
-	ImageView getMessageRefresh;
-
 	@Inject
 	private Bus bus;
 
@@ -77,7 +73,7 @@ class FragmentMain extends Fragment implements ContextualUndoAdapter.DeleteItemC
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_main, container, false);
 		Views.inject(this, view);
-		getMessageRefresh.setVisibility(View.INVISIBLE);
+		//getMessageRefresh.setVisibility(View.INVISIBLE);
 		isRefreshing = false;
 
 		setAdapter();
@@ -217,12 +213,6 @@ class FragmentMain extends Fragment implements ContextualUndoAdapter.DeleteItemC
 		return true;
 	}
 
-	@OnClick(R.id.tv_get_messages)
-	public void getMessage() {
-		Timber.d("ping server");
-		startGetMessageService(null);
-	}
-
 	private void startGetMessageService(MenuItem item) {
 		if (isRefreshing) {
 			return;
@@ -232,8 +222,7 @@ class FragmentMain extends Fragment implements ContextualUndoAdapter.DeleteItemC
 		getActivity().startService(intent);
 	}
 
-	@OnClick(R.id.btn_show_gcm)
-	public void registerGcm() {
+	private void registerGcm() {
 		GCMRegistrar.setRegisteredOnServer(getActivity(), true);
 		Timber.d("gcm id = " + GCMRegistrar.getRegistrationId(getActivity()));
 
@@ -266,8 +255,8 @@ class FragmentMain extends Fragment implements ContextualUndoAdapter.DeleteItemC
 		anim.setDuration(700);
 
 		// Start animating the image
-		getMessageRefresh.setVisibility(View.VISIBLE);
-		getMessageRefresh.startAnimation(anim);
+		//getMessageRefresh.setVisibility(View.VISIBLE);
+		//getMessageRefresh.startAnimation(anim);
 
 		if (item == null) {
 			return;
@@ -284,11 +273,11 @@ class FragmentMain extends Fragment implements ContextualUndoAdapter.DeleteItemC
 
 	private void stopRefreshAnimation() {
 		isRefreshing = false;
-		if (getMessageRefresh != null) {
-			getMessageRefresh.setVisibility(View.INVISIBLE);
-			getMessageRefresh.setAnimation(null);
-		}
-		if (tempAnimationImageView != null) {
+//		if (getMessageRefresh != null) {
+//			getMessageRefresh.setVisibility(View.INVISIBLE);
+//			getMessageRefresh.setAnimation(null);
+//		}
+        if (tempAnimationImageView != null) {
 			tempAnimationImageView.clearAnimation();
 		}
 		getActivity().invalidateOptionsMenu();

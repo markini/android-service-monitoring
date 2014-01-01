@@ -1,7 +1,7 @@
 package at.marki.Client.monitoring;
 
 import android.content.Context;
-import at.marki.Client.receiver.GCMIntentService;
+import at.marki.Client.GCMIntentService;
 import at.marki.Client.utils.Settingshandler;
 import com.github.kevinsawicki.http.HttpRequest;
 import timber.log.Timber;

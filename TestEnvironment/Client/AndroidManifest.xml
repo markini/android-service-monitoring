@@ -63,7 +63,7 @@
 				<action android:name="com.google.android.c2dm.intent.RECEIVE"/>
 				<action android:name="com.google.android.c2dm.intent.REGISTRATION"/>
 
-				<category android:name="at.marki.Client.receiver"/>
+				<category android:name="at.marki.Client"/>
 			</intent-filter>
 		</receiver>
 		<!-- GCM END -->
@@ -107,7 +107,7 @@
 
 		<receiver android:name=".monitoring.MonitorConnectivity"/>
 
-		<service android:name=".receiver.GCMIntentService"/>
+		<service android:name=".GCMIntentService"/>
 		<service android:name="at.marki.Client.download.GetNewDataService"/>
 		<service android:name=".service.StateHandler"/>
 		<service android:name=".service.RegisterGcmIdService"/>

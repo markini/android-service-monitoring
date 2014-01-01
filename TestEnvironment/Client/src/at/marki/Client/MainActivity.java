@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import at.marki.Client.events.newMessageEvent;
-import at.marki.Client.receiver.GCMIntentService;
 import at.marki.Client.utils.Data;
 import at.marki.Client.utils.Message;
 import at.marki.Client.utils.Parser;

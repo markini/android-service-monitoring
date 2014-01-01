@@ -6,7 +6,6 @@
 	<dev.dworks.libs.astickyheader.ui.PinnedSectionListView
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
-			android:paddingBottom="57dp"
 			android:id="@+id/list"
 			android:layout_alignParentTop="true"
 			android:transcriptMode="normal"
@@ -17,57 +16,5 @@
 			android:drawSelectorOnTop="true"
 			android:fastScrollEnabled="false"
 			android:fastScrollAlwaysVisible="false"/>
-
-	<LinearLayout
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_alignParentBottom="true"
-			android:divider="?android:dividerHorizontal"
-			android:showDividers="middle|beginning"
-			android:orientation="vertical"
-			android:background="@color/holo_dark_grey">
-
-		<LinearLayout
-				android:layout_width="match_parent"
-				android:layout_height="55dp"
-				android:orientation="horizontal"
-				android:layout_alignParentBottom="true"
-				android:id="@+id/lin_lay_gcm_ping"
-				style="?android:attr/buttonBarStyle">
-
-			<TextView
-					android:id="@+id/btn_show_gcm"
-					style="?android:attr/buttonBarButtonStyle"
-					android:layout_width="0dp"
-					android:layout_height="match_parent"
-					android:layout_weight="1"
-					android:text="Register GCM"/>
-
-			<LinearLayout
-					android:layout_width="0dp"
-					android:layout_height="match_parent"
-					android:layout_weight="1">
-
-				<TextView
-						android:id="@+id/tv_get_messages"
-						android:layout_weight="1"
-						style="?android:attr/buttonBarButtonStyle"
-						android:layout_width="0dp"
-						android:layout_height="match_parent"
-						android:text="Get Message"/>
-
-				<ImageView
-						android:layout_width="24dp"
-						android:layout_height="24dp"
-						android:src="@drawable/ic_navigation_refresh"
-						android:layout_gravity="center"
-						android:id="@+id/iv_refresh"/>
-
-			</LinearLayout>
-
-
-		</LinearLayout>
-	</LinearLayout>
-
 </RelativeLayout>
 

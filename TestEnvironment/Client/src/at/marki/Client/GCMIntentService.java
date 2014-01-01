@@ -1,4 +1,4 @@
-package at.marki.Client.receiver;
+package at.marki.Client;
 
 import android.content.Context;
 import android.content.Intent;

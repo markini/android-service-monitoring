@@ -15,6 +15,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.swing.*;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class ServletGetNewData extends HttpServlet {
 
@@ -55,8 +58,12 @@ public class ServletGetNewData extends HttpServlet {
         System.out.println("sending message " + message);
         ServerManagementGui gui = ServerManagementGui.getGui();
         if (gui != null && gui.listLog != null && gui.listMessages != null) {
-            ((DefaultListModel) gui.listLog.getModel()).addElement("new ping from device");
-            ((DefaultListModel) gui.listMessages.getModel()).addElement("message: " + message);
+
+            SimpleDateFormat sdf = new SimpleDateFormat("dd.MM HH:mm:ss", Locale.GERMANY);
+            Date resultTime = new Date(System.currentTimeMillis());
+
+            ((DefaultListModel) gui.listLog.getModel()).addElement("Device using http to contact. " + sdf.format(resultTime));
+            //((DefaultListModel) gui.listMessages.getModel()).addElement("message: " + message.message);
         }
     }
 }

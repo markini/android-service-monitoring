@@ -8,7 +8,10 @@ import at.marki.Server.Servlet.GCMSend;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 import java.util.UUID;
 
 /**
@@ -38,7 +41,11 @@ public class ServerManagementGui {
                     devices.add(Data.gcmId);
                 }
                 GCMSend.sendMessage(Data.currentMessage, devices);
-                ((DefaultListModel) listMessages.getModel()).addElement("message: " + Data.currentMessage.message);
+
+                SimpleDateFormat sdf = new SimpleDateFormat("dd.MM HH:mm:ss", Locale.GERMANY);
+                Date resultTime = new Date(System.currentTimeMillis());
+
+                ((DefaultListModel) listMessages.getModel()).addElement("message: " + Data.currentMessage.message + " " + sdf.format(resultTime));
             }
         });
 
