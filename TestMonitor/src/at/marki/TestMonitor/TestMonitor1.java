@@ -13,13 +13,13 @@ public class TestMonitor1 extends Monitor {
 
     @Override
     public boolean observeThis(Context context) {
-        Timber.d("Monitor this called execution process");
+        Timber.d("Monitor this called execution process - alarmservice 1");
         return true;
     }
 
     @Override
     public boolean handleEvent(Context context) {
-        Timber.d("Handle problem called execution process");
+        Timber.d("Handle problem called execution process - alarmservice 1");
         return true;
     }
 

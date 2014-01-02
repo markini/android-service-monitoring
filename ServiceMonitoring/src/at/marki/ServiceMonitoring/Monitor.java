@@ -28,8 +28,9 @@ public abstract class Monitor extends BroadcastReceiver implements Parcelable {
 
     protected abstract boolean handleEvent(Context context);
 
-    public void executeMonitoring(Context context, boolean startSticky, int intervalInMinutes) {
-        long interval = intervalInMinutes * 60 * 1000;
+    public void executeMonitoring(Context context, boolean startSticky, float intervalInMinutes) {
+        long interval = (long) (intervalInMinutes * 60 * 1000);
+        System.out.println("INTERVAL: " + interval);
         if (startSticky) {
             startAlarmTask(context, interval);
         } else {
@@ -79,6 +80,7 @@ public abstract class Monitor extends BroadcastReceiver implements Parcelable {
      *                 monitor executes (in milliseconds)
      */
     private void startAlarmTask(Context context, long interval) {
+        System.out.println(this.getClass());
         Intent intent = new Intent(context, this.getClass());
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
                 context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);

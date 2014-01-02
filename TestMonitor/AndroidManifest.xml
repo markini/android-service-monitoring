@@ -16,6 +16,8 @@
             </intent-filter>
         </activity>
 
+		<receiver
+				android:name=".TestMonitor1"/>
         <receiver
                 android:name=".TestMonitor2"/>
         <service android:name="at.marki.ServiceMonitoring.MonitorThisService"/>

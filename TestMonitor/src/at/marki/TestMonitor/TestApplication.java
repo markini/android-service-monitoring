@@ -22,7 +22,7 @@ public class TestApplication extends Application {
     }
 
     public void setRecurringAlarm(){
-        monitor1.executeMonitoring(this,false,1);
+        monitor1.executeMonitoring(this,true,1);
         monitor2.executeMonitoring(this,true,2);
     }
 
