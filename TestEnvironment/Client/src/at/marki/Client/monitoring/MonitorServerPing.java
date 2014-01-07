@@ -4,9 +4,13 @@ import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 import at.marki.Client.EventHandler;
+import at.marki.Client.utils.Data;
+import at.marki.Client.utils.Log;
 import at.marki.Client.utils.Settingshandler;
 import at.marki.ServiceMonitoring.Monitor;
 import timber.log.Timber;
+
+import java.util.UUID;
 
 /**
  * Created by marki on 06.11.13.
@@ -20,10 +24,16 @@ public class MonitorServerPing extends Monitor {
 //            return false;
 //        }
 
+        Log logEntry = new Log(UUID.randomUUID().toString(),"",System.currentTimeMillis());
+
         if(PingServer.performPing(context)){
             Settingshandler.setServerState(context,true);
+            logEntry.logMessage = "Server check succeeded.";
+            Data.addLogEntry(context, logEntry);
             return true;
         }else{
+            logEntry.logMessage = "Server check failed.";
+            Data.addLogEntry(context, logEntry);
             return false;
         }
     }

@@ -207,6 +207,9 @@ class FragmentMain extends Fragment implements ContextualUndoAdapter.DeleteItemC
 			case R.id.menu_register_gcm:
 				registerGcm();
 				break;
+            case R.id.menu_log_dialog:
+                DialogStarter.startLogDialog(getActivity());
+                break;
 			default:
 				return super.onOptionsItemSelected(item);
 		}

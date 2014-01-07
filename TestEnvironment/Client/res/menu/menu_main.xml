@@ -32,10 +32,14 @@
 			android:icon="@drawable/ic_action_get_message"
 			android:showAsAction="never"
 			android:title="Stop Monitoring"/>
-
 	<item
 			android:id="@+id/menu_create_mock_messages"
 			android:icon="@drawable/ic_action_get_message"
 			android:showAsAction="never"
 			android:title="Create mock messages"/>
+	<item
+			android:id="@+id/menu_log_dialog"
+			android:icon="@drawable/ic_action_get_message"
+			android:showAsAction="never"
+			android:title="Show log"/>
 </menu>

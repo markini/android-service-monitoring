@@ -48,10 +48,10 @@ public class ClientApplication extends Application {
 //            gcmCheckMonitor.executeMonitoring(this, false, 2);
 //        }
 		if (!connectivityMonitor.isRunning()) {
-			connectivityMonitor.executeMonitoring(this, true, 2);
+			connectivityMonitor.executeMonitoring(this, true, 1);
 		}
 		if (!serverMonitor.isRunning()) {
-			serverMonitor.executeMonitoring(this, true, 3);
+			serverMonitor.executeMonitoring(this, true, 2);
 		}
 
 	}
